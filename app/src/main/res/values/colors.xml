@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-</resources>
+<resources >
+    <color name = "colorPrimary" >#363F44</color >
+    <color name = "colorPrimaryDark" >#ff1a1f23</color >
+    <color name = "colorAccent" >#FF4081</color >
+
+    <color name = "colorWindowBg" >#363F44</color >
+    <color name = "color_movie_place_holder" >#ff435d64</color >
+
+</resources >

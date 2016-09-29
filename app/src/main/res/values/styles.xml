@@ -1,11 +1,18 @@
-<resources>
+<resources >
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name = "AppTheme" parent = "Theme.AppCompat.Light.NoActionBar" >
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
+        <item name = "colorPrimary" >@color/colorPrimary</item >
+        <item name = "colorPrimaryDark" >@color/colorPrimaryDark</item >
+        <item name = "colorAccent" >@color/colorAccent</item >
+    </style >
 
-</resources>
+
+    <!-- 进行各类型适配 -->
+    <style name = "AppRealTheme" parent = "AppTheme" />
+
+    <style name = "AppRealTheme.AppBarOverlay" parent = "ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name = "AppRealTheme.PopupOverlay" parent = "ThemeOverlay.AppCompat.Light" />
+</resources >

@@ -9,3 +9,5 @@
 *.apk
 /local
 *~
+*.log
+.idea/
