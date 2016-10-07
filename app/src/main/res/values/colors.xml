@@ -7,4 +7,5 @@
     <color name = "colorWindowBg" >#363F44</color >
     <color name = "color_movie_place_holder" >#ff435d64</color >
 
+    <color name="co_movie_placeholder">#ff4e5d64</color>
 </resources >

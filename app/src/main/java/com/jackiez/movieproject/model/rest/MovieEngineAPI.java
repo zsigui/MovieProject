@@ -7,10 +7,10 @@ import com.jackiez.movieproject.model.entities.MovieDetail;
 import com.jackiez.movieproject.model.entities.MovieImage;
 import com.jackiez.movieproject.model.entities.PageData;
 
-import retrofit2.Callback;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Observable;
 
 /**
  * @author JackieZhuang
@@ -20,37 +20,32 @@ import retrofit2.http.Query;
 
 public interface MovieEngineAPI {
 
-    @GET(RestConst.GET_POPULAR_MOVIES)
-    Callback<PageData<Movie>> getPopularMovies(
-            @Query(RestConst.QUERY_API_KEY) String apiKey
-    );
-
     @GET(RestConst.GET_MOVIE_DETAIL)
-    Callback<MovieDetail> getMovieDetail (
+    Observable<MovieDetail> getMovieDetail (
             @Query(RestConst.QUERY_API_KEY) String apiKey,
-            @Path(RestConst.PATH_ID) String id
+            @Path(RestConst.PATH_ID) int id
     );
 
     @GET(RestConst.GET_POPULAR_MOVIES_BY_PAGE)
-    Callback<PageData<Movie>> getPopularMoviesByPage(
+    Observable<PageData<Movie>> getPopularMoviesByPage(
             @Query(RestConst.QUERY_API_KEY) String apiKey,
-            @Path(RestConst.PATH_ID) String id
+            @Query(RestConst.QUERY_PAGE) int page
     );
 
     @GET(RestConst.GET_CONFIGURATION)
-    Callback<ConfigurationInfo> getConfiguration (
+    Observable<ConfigurationInfo> getConfiguration (
             @Query(RestConst.QUERY_API_KEY) String apiKey
     );
 
     @GET(RestConst.GET_MOVIE_REVIEWS)
-    Callback<PageData<MovieImage>> getMovieReviews (
+    Observable<PageData<MovieImage>> getMovieReviews (
             @Query(RestConst.QUERY_API_KEY) String apiKey,
-            @Path(RestConst.PATH_ID) String id
+            @Path(RestConst.PATH_ID) int id
     );
 
     @GET(RestConst.GET_MOVIE_IMAGES)
-    Callback<PageData<MovieImage>> getMovieImages (
+    Observable<PageData<MovieImage>> getMovieImages (
             @Query(RestConst.QUERY_API_KEY) String apiKey,
-            @Path(RestConst.PATH_ID) String id
+            @Path(RestConst.PATH_ID) int id
     );
 }

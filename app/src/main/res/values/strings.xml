@@ -1,7 +1,7 @@
-<resources >
-    <string name = "app_name" >MovieProject</string >
+<resources>
+    <string name="app_name">MovieProject</string>
 
-    <string name = "star_data" >
+    <string name="star_data">
             M 200.30535,69.729172
             C 205.21044,69.729172 236.50709,141.52218 240.4754,144.40532
             C 244.4437,147.28846 322.39411,154.86809 323.90987,159.53312
@@ -13,9 +13,9 @@
             C 133.79307,216.14828 75.185066,164.19813 76.700824,159.53311
             C 78.216581,154.86809 156.16699,147.28846 160.13529,144.40532
             C 164.1036,141.52218 195.40025,69.729172 200.30535,69.729172 z
-    </string >
+    </string>
 
-    <string name = "star_lollipop" >
+    <string name="star_lollipop">
             M 223.42,133.484
             C 237.895,98.1973 280.378,100.58 295.49,133.484
             C 302.176,148.044 293.576,165.914 270.253,183.357
@@ -27,15 +27,15 @@
             C 254.579,291.371 255.048,256.788 255.048,249.052
             C 255.048,238.561 254.706,187.75 248.302,183.489
             C 221.536,165.677 218.848,144.628 223.42,133.484 z
-    </string >
-    <string name = "title_activity_drawer" >DrawerActivity</string >
+    </string>
+    <string name="title_activity_drawer">DrawerActivity</string>
 
-    <string name = "navigation_drawer_open" >Open navigation drawer</string >
-    <string name = "navigation_drawer_close" >Close navigation drawer</string >
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name = "action_settings" >Settings</string >
+    <string name="action_settings">Settings</string>
 
-    <string name = "large_text" >
+    <string name="large_text">
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."
@@ -123,5 +123,8 @@
         "On the layout level, design your app layout to minimize opportunities for interference. "
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
-    </string >
-</resources >
+    </string>
+
+    <string name="st_error_retry_hint">点击空白重试</string>
+    <string name="st_empty_hint">获取数据为空</string>
+</resources>

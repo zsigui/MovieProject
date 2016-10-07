@@ -20,6 +20,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by zsigui on 16-9-29.
@@ -57,16 +59,17 @@ public class DataSource {
     private Retrofit createRetrofit() {
         return new Retrofit.Builder()
                 .addConverterFactory(LoganSquareConverterFactory.create())
-                .client(createDefaultClient())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.newThread()))
                 .baseUrl(RestConst.BASE_MOVIE_HOST)
+                .client(createDefaultClient())
                 .build();
     }
 
     private OkHttpClient createDefaultClient() {
         return new OkHttpClient.Builder()
-                .connectTimeout(Constants.CONNECT_TIMEOUT, TimeUnit.MICROSECONDS)
-                .readTimeout(Constants.READ_TIMEOUT, TimeUnit.MICROSECONDS)
-                .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.MICROSECONDS)
+                .connectTimeout(Constants.CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(Constants.READ_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(false)
                 .connectionPool(new ConnectionPool(4, 5, TimeUnit.MINUTES))
                 .cache(createDefaultCache())
@@ -97,6 +100,7 @@ public class DataSource {
                             .build();
                 }
                 String cacheControlStr = cacheControl.toString();
+
                 return response.newBuilder()
                         .removeHeader("Pragma")
                         .header("Cache-Control", cacheControlStr)
