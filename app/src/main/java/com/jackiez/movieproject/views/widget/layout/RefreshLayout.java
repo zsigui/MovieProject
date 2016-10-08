@@ -36,7 +36,7 @@ public class RefreshLayout extends SwipeRefreshLayout{
     /**
      * 上拉监听器, 到了最底部的上拉加载操作
      */
-    private OnLoadListener mOnLoadListener;
+    private OnLoadMoreListener mOnLoadListener;
 
     /**
      * ListView的加载中footer
@@ -200,17 +200,6 @@ public class RefreshLayout extends SwipeRefreshLayout{
         } else if (mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
             View lastChildView = mRecyclerView.getLayoutManager()
                     .getChildAt(mRecyclerView.getLayoutManager().getChildCount() - 1);
-//            if (mRecyclerView.getLayoutManager() instanceof LinearLayoutManager
-//                    || mRecyclerView.getLayoutManager() instanceof GridLayoutManager) {
-//
-//            } else if (mRecyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-//                StaggeredGridLayoutManager sglm = ((StaggeredGridLayoutManager) mRecyclerView.getLayoutManager());
-//                int[] s = new int[sglm.getSpanCount()];
-//                sglm.findLastVisibleItemPositions(s);
-//
-//            } else {
-//
-//            }
             if (lastChildView != null) {
                 int lastPosition = mRecyclerView.getLayoutManager().getPosition(lastChildView);
                 if (lastPosition == mRecyclerView.getLayoutManager().getItemCount() - 1) {
@@ -240,7 +229,7 @@ public class RefreshLayout extends SwipeRefreshLayout{
             // 设置状态
             setLoading(true);
             //
-            mOnLoadListener.onLoad();
+            mOnLoadListener.onLoadMore();
         }
     }
 
@@ -280,12 +269,8 @@ public class RefreshLayout extends SwipeRefreshLayout{
     /**
      * @param loadListener
      */
-    public void setOnLoadListener(OnLoadListener loadListener) {
+    public void setOnLoadListener(OnLoadMoreListener loadListener) {
         mOnLoadListener = loadListener;
-    }
-
-    public interface OnLoadListener {
-        void onLoad();
     }
 
     public interface FooterListener {
