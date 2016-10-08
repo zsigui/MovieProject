@@ -5,22 +5,29 @@ package com.jackiez.movieproject.views.widget.layout;
  */
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
+
+import com.jackiez.movieproject.R;
 
 /**
  * 继承自SwipeRefreshLayout,从而实现滑动到底部时上拉加载更多的功能.
  *
  * @author mrsimple
  */
-public class RefreshLayout extends SwipeRefreshLayout{
+public class RefreshLayout extends SwipeRefreshLayout {
 
     /**
      * 滑动到最下面时的上拉操作
@@ -46,7 +53,7 @@ public class RefreshLayout extends SwipeRefreshLayout{
     /**
      * 按下时的y坐标
      */
-    private int mYDown;
+    private int mDownY;
     /**
      * 抬起时的y坐标, 与mYDown一起用于滑动到底部时判断是上拉还是下拉
      */
@@ -69,9 +76,7 @@ public class RefreshLayout extends SwipeRefreshLayout{
 
     public RefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        int id = context.getResources().getIdentifier("rl_view_footer", "layout", context.getPackageName());
-        mViewFooter = LayoutInflater.from(context).inflate(id, null, false);
+        setViewFooter(R.layout.item_footer);
     }
 
     @Override
@@ -81,6 +86,14 @@ public class RefreshLayout extends SwipeRefreshLayout{
         if (mListView == null && mRecyclerView == null) {
             getListView();
         }
+    }
+
+    public void setViewFooter(View viewFooter) {
+        mViewFooter = viewFooter;
+    }
+
+    public void setViewFooter(@LayoutRes int layoutId) {
+        setViewFooter(LayoutInflater.from(getContext()).inflate(layoutId, null));
     }
 
     @Override
@@ -107,39 +120,35 @@ public class RefreshLayout extends SwipeRefreshLayout{
                     if (childView instanceof ListView) {
                         mListView = (ListView) childView;
                         // 设置滚动监听器给ListView, 使得滚动的情况下也可以自动加载
-                        mListView.setOnScrollListener(new AbsListView.OnScrollListener(){
+                        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
                             @Override
-                            public void onScrollStateChanged(AbsListView view, int scrollState) {}
+                            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                                if (scrollState == SCROLL_STATE_IDLE
+                                        && canLoad()) {
+                                    // 滚动时到了最底部也可以加载更多
+                                    loadData();
+                                }
+                            }
 
                             @Override
                             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
                                                  int totalItemCount) {
-                                // 滚动时到了最底部也可以加载更多
-                                if (canLoad()) {
-                                    loadData();
-                                }
                             }
                         });
                         return;
-                    } if (childView instanceof RecyclerView) {
+                    }
+                    if (childView instanceof RecyclerView) {
                         mRecyclerView = (RecyclerView) childView;
                         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
-                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {}
-
-                            @Override
-                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                                mLastY = mYDown - dy;
-                                if (canLoad()) {
+                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                                        && canLoad()) {
                                     loadData();
                                 }
                             }
                         });
                         return;
-                    } else {
-                        if (i == getChildCount() - 1) {
-                            throw new IllegalStateException("RefreshLayout 需要缺少直接子类 ListView 或者 RecyclerView！");
-                        }
                     }
                 }
             }
@@ -166,7 +175,10 @@ public class RefreshLayout extends SwipeRefreshLayout{
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 // 按下
-                mYDown = (int) ev.getY();
+                mDownY = (int) ev.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                mLastY = (int) ev.getY();
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -196,20 +208,61 @@ public class RefreshLayout extends SwipeRefreshLayout{
      */
     private boolean isBottom() {
         if (mListView != null && mListView.getAdapter() != null) {
-            return mListView.getLastVisiblePosition() == (mListView.getAdapter().getCount() - 1);
+            return isListViewBottom();
         } else if (mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
-            View lastChildView = mRecyclerView.getLayoutManager()
-                    .getChildAt(mRecyclerView.getLayoutManager().getChildCount() - 1);
-            if (lastChildView != null) {
-                int lastPosition = mRecyclerView.getLayoutManager().getPosition(lastChildView);
-                if (lastPosition == mRecyclerView.getLayoutManager().getItemCount() - 1) {
+            return isRecyclerViewBottom();
+        }
+        return false;
+    }
+
+    private boolean isRecyclerViewBottom() {
+        wrapperRVAdapter(mRecyclerView);
+
+        int lastItemPos = mRecyclerView.getAdapter().getItemCount() - 1;
+        if (mRecyclerView.getLayoutManager() instanceof LinearLayoutManager
+                || mRecyclerView.getLayoutManager() instanceof GridLayoutManager) {
+            int lastVisiblePosition;
+            if (mRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+                lastVisiblePosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
+                        .findLastVisibleItemPosition();
+            } else {
+                lastVisiblePosition = ((GridLayoutManager) mRecyclerView.getLayoutManager())
+                        .findLastVisibleItemPosition();
+            }
+            return lastVisiblePosition >= lastItemPos;
+
+        } else if (mRecyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+            StaggeredGridLayoutManager layoutManager = ((StaggeredGridLayoutManager) mRecyclerView.getLayoutManager());
+            int[] lastPoss = new int[layoutManager.getSpanCount()];
+            layoutManager.findLastVisibleItemPositions(lastPoss);
+            for (int pos : lastPoss) {
+                if (pos >= lastItemPos) {
                     return true;
                 }
-            } else {
-                return true;
+            }
+        } else {
+            View lastChildView = mRecyclerView.getLayoutManager().findViewByPosition(lastItemPos);
+            if (lastChildView != null) {
+                return mRecyclerView.getLayoutManager().getPosition(lastChildView) >= lastItemPos;
             }
         }
         return false;
+    }
+
+    private boolean isListViewBottom() {
+        return mListView.getLastVisiblePosition() == (mListView.getAdapter().getCount() - 1);
+    }
+
+    /**
+     * 判断并为RecyclerView的Adapter进行LoadMoreAdapter装饰
+     */
+    private void wrapperRVAdapter(RecyclerView recyclerView) {
+        if (recyclerView != null && recyclerView.getAdapter() != null
+                && !(recyclerView.getAdapter() instanceof LoadMoreAdapter)) {
+            recyclerView.setAdapter(new LoadMoreAdapter(recyclerView.getAdapter()));
+            // 注册相同监听器
+            recyclerView.getAdapter().registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {});
+        }
     }
 
     /**
@@ -218,7 +271,7 @@ public class RefreshLayout extends SwipeRefreshLayout{
      * @return
      */
     private boolean isPullUp() {
-        return (mYDown - mLastY) >= TOUCH_SLOP;
+        return (mDownY - mLastY) >= TOUCH_SLOP;
     }
 
     /**
@@ -228,7 +281,6 @@ public class RefreshLayout extends SwipeRefreshLayout{
         if (mOnLoadListener != null) {
             // 设置状态
             setLoading(true);
-            //
             mOnLoadListener.onLoadMore();
         }
     }
@@ -237,45 +289,111 @@ public class RefreshLayout extends SwipeRefreshLayout{
      * @param loading
      */
     public void setLoading(boolean loading) {
+        if (isLoading == loading) {
+            return;
+        }
         isLoading = loading;
-        if (isLoading) {
-            if (mListView != null && mListView.getAdapter() != null) {
-                if (mListView.getFooterViewsCount() == 0) {
-                    mListView.addFooterView(mViewFooter);
-                } else {
-                    mViewFooter.setVisibility(View.VISIBLE);
-                }
+        if (mListView != null && mListView.getAdapter() != null) {
+            setListViewLoading(isLoading);
+        } else if (mRecyclerView != null && mRecyclerView.getAdapter() != null) {
+            setRecyclerViewLoading(isLoading);
+        }
+        mDownY = mLastY = 0;
+    }
 
-            } else if (mRecyclerView != null && mRecyclerView.getAdapter() != null
-                    && mRecyclerView.getAdapter() instanceof FooterListener) {
-                ((FooterListener) mRecyclerView.getAdapter()).showFooter(true);
+    private void setRecyclerViewLoading(boolean isLoading) {
+        wrapperRVAdapter(mRecyclerView);
+        if (isLoading) {
+            mRecyclerView.getAdapter().notifyItemInserted(mRecyclerView.getAdapter().getItemCount() - 1);
+        } else {
+            mRecyclerView.getAdapter().notifyItemRemoved(mRecyclerView.getAdapter().getItemCount());
+        }
+    }
+
+    private void setListViewLoading(boolean isLoading) {
+        if (isLoading) {
+            if (mListView.getFooterViewsCount() == 0) {
+                mListView.addFooterView(mViewFooter);
+            } else {
+                mViewFooter.setVisibility(View.VISIBLE);
             }
         } else {
-            if (mListView != null && mListView.getAdapter() != null) {
-                if (mListView.getAdapter() instanceof HeaderViewListAdapter) {
-                    mListView.removeFooterView(mViewFooter);
-                } else {
-                    mViewFooter.setVisibility(View.GONE);
-                }
-            } else if (mRecyclerView != null && mRecyclerView.getAdapter() != null
-                    && mRecyclerView.getAdapter() instanceof FooterListener) {
-                ((FooterListener) mRecyclerView.getAdapter()).showFooter(false);
+            if (mListView.getAdapter() instanceof HeaderViewListAdapter) {
+                mListView.removeFooterView(mViewFooter);
+            } else {
+                mViewFooter.setVisibility(View.GONE);
             }
-            mYDown = 0;
-            mLastY = 0;
         }
     }
 
     /**
-     * @param loadListener
+     * 设置滑动到底部加载更多时的回调函数
      */
     public void setOnLoadListener(OnLoadMoreListener loadListener) {
         mOnLoadListener = loadListener;
     }
 
-    public interface FooterListener {
-        void showFooter(boolean isShow);
+    /**
+     * 加载更多适配器，用于封装 RecyclerView
+     */
+    private class LoadMoreAdapter extends RecyclerView.Adapter {
+
+        private static final int TYPE_FOOTER = 0xF00F12AB;
+
+        private RecyclerView.Adapter mAdapter;
+
+        LoadMoreAdapter(RecyclerView.Adapter adapter) {
+            mAdapter = adapter;
+        }
+
+        @Override
+        public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+            super.registerAdapterDataObserver(observer);
+            mAdapter.registerAdapterDataObserver(observer);
+        }
+
+        @Override
+        public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+            super.unregisterAdapterDataObserver(observer);
+            mAdapter.unregisterAdapterDataObserver(observer);
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == TYPE_FOOTER) {
+                return mViewFooter == null ? null : new LoadMoreHolder(mViewFooter);
+            }
+            return mAdapter.onCreateViewHolder(parent, viewType);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (getItemViewType(position) != TYPE_FOOTER) {
+                mAdapter.onBindViewHolder(holder, position);
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return isLoading && position == getItemCount() - 1 ?
+                    TYPE_FOOTER : super.getItemViewType(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mAdapter.getItemCount() + (isLoading ? 1 : 0);
+        }
     }
 
+    /**
+     * RecyclerView 底部加载更多视图 ViewHolder
+     */
+    private static class LoadMoreHolder extends RecyclerView.ViewHolder {
+
+        private LoadMoreHolder(View itemView) {
+            super(itemView);
+        }
+    }
 }
 

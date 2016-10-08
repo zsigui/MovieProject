@@ -18,6 +18,7 @@ import com.jackiez.movieproject.utils.ObservableUtil;
 import com.jackiez.movieproject.views.adapter.MainAdapter;
 import com.jackiez.movieproject.views.adapter.decoration.RecyclerBoundDecoration;
 import com.jackiez.movieproject.views.listener.OnFinishListener;
+import com.jackiez.movieproject.views.widget.layout.OnLoadMoreListener;
 import com.jackiez.movieproject.vp.presenter.AbsPresenterWithViewManager;
 import com.jackiez.movieproject.vp.view.MainActivityVD;
 
@@ -30,7 +31,7 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AbsPresenterWithViewManager<List<Movie>, MainActivityVD>
         implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener,
-        OnFinishListener{
+        OnFinishListener, OnLoadMoreListener {
 
     private MainAdapter mAdapter;
     protected boolean mInRefreshing = false;
@@ -208,5 +209,25 @@ public class MainActivity extends AbsPresenterWithViewManager<List<Movie>, MainA
     public void release() {
         ObservableUtil.unsubscribe(mRefreshSubscription);
         mRefreshSubscription = null;
+    }
+
+    @Override
+    public void onLoadMore() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getViewDelegate().getBinding().splContainer.setLoading(false);
+                    }
+                });
+            }
+        }).start();
     }
 }

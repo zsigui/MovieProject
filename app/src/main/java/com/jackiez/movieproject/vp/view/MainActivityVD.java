@@ -1,6 +1,7 @@
 package com.jackiez.movieproject.vp.view;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.AppBarLayout;
@@ -11,6 +12,7 @@ import android.view.View;
 
 import com.jackiez.movieproject.R;
 import com.jackiez.movieproject.databinding.ActivityMainBinding;
+import com.jackiez.movieproject.utils.UIUtil;
 import com.jackiez.movieproject.views.activity.MainActivity;
 import com.jackiez.movieproject.views.adapter.MainAdapter;
 import com.jackiez.movieproject.vp.view.base.AbsViewDelegateWithViewManager;
@@ -32,6 +34,9 @@ public class MainActivityVD extends AbsViewDelegateWithViewManager<ActivityMainB
     @Override
     public void processLogic(Bundle saveInstanceState) {
         MainActivity activity = getActivity();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            UIUtil.setTransfluentStatusBar(activity);
+        }
         activity.setSupportActionBar(mBinding.tbContainer);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this.getActivity(), mBinding.dlContainer, mBinding.tbContainer,
@@ -52,6 +57,7 @@ public class MainActivityVD extends AbsViewDelegateWithViewManager<ActivityMainB
             }
         });
         mBinding.splContainer.setOnRefreshListener(activity);
+        mBinding.splContainer.setOnLoadListener(activity);
     }
 
     @Override

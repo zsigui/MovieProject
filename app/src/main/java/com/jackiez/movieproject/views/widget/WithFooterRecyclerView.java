@@ -118,6 +118,11 @@ public class WithFooterRecyclerView extends RecyclerView {
             Log.d("WithFooterRecyclerView", "Need to set Adapter before judging isBottom()");
             return false;
         }
+        if (getLayoutManager() == null) {
+            // LayoutManager，不进行判断
+            Log.d("WithFooterRecyclerView", "Need to set LayoutManager before judging isBottom()");
+            return false;
+        }
         int lastItemPos = getAdapter().getItemCount() - 1;
         if (getLayoutManager() instanceof LinearLayoutManager
                 || getLayoutManager() instanceof GridLayoutManager) {
@@ -212,7 +217,7 @@ public class WithFooterRecyclerView extends RecyclerView {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType == TYPE_FOOTER) {
-                return new LoadMoreHolder(loadMoreView);
+                return loadMoreView == null ? null : new LoadMoreHolder(loadMoreView);
             }
             return mAdapter.onCreateViewHolder(parent, viewType);
         }
