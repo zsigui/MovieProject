@@ -14,8 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jackiez.movieproject.views.widget.layout.OnLoadMoreListener;
-
 /**
  * @author JackieZhuang
  * @email zsigui@foxmail.com
@@ -240,5 +238,9 @@ public class WithFooterRecyclerView extends RecyclerView {
         public int getItemCount() {
             return mAdapter.getItemCount() + (isFooterShowing ? 1 : 0);
         }
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore();
     }
 }

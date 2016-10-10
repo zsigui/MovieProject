@@ -395,5 +395,15 @@ public class RefreshLayout extends SwipeRefreshLayout {
             super(itemView);
         }
     }
+
+    /**
+     * 加载更多接口
+     */
+    public interface OnLoadMoreListener {
+        /**
+         * 当加载更多时会调用该类
+         */
+        void onLoadMore();
+    }
 }
 

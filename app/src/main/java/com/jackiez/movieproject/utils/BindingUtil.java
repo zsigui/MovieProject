@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.common.base.Strings;
 import com.jackiez.common.utils.RestConst;
-import com.jackiez.movieproject.R;
 
 /**
  * @author JackieZhuang
@@ -30,11 +29,12 @@ public class BindingUtil {
         url = RestConst.BASE_PICS_SRC + url;
         Glide.with(iv.getContext())
                 .load(url)
-                .placeholder(R.drawable.awesome)
+//                .placeholder(R.drawable.awesome)
                 .error(android.R.drawable.ic_delete)
                 .centerCrop()
                 .crossFade()
                 .into(iv);
+//        iv.setImageURI(url);
     }
 
     public static <T extends ViewDataBinding> T create(Context context, @LayoutRes int layotuId, ViewGroup parent) {

@@ -5,7 +5,6 @@ import android.databinding.ViewDataBinding;
 import android.view.View;
 
 import com.jackiez.movieproject.R;
-import com.jackiez.movieproject.utils.AppDebugLog;
 import com.jackiez.movieproject.views.widget.MultiStateViewManager;
 
 /**
@@ -32,23 +31,23 @@ public abstract class AbsViewDelegateWithViewManager<Binding extends ViewDataBin
         return mViewManager.getContainer();
     }
 
+    public void setRetryListener(MultiStateViewManager.OnRetryOrEmptyListener listener) {
+        mViewManager.setOnRetryOrEmptyListener(listener);
+    }
+
     public void showLoading() {
-        AppDebugLog.d(AppDebugLog.TAG_DEBUG_INFO, "show loading");
         mViewManager.showLoading();
     }
 
     public void showEmpty() {
-        AppDebugLog.d(AppDebugLog.TAG_DEBUG_INFO, "show empty");
         mViewManager.showEmpty();
     }
 
     public void showError() {
-        AppDebugLog.d(AppDebugLog.TAG_DEBUG_INFO, "show error");
         mViewManager.showErrorRetry();
     }
 
     public void showContent() {
-        AppDebugLog.d(AppDebugLog.TAG_DEBUG_INFO, "show content");
         mViewManager.showContent();
     }
 }

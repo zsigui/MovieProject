@@ -42,6 +42,14 @@ public abstract class BaseLVAdapter<Data, VH extends BaseHolder> extends BaseAda
         mContext = null;
     }
 
+    public List<Data> getData() {
+        return mData;
+    }
+
+    public void setData(List<Data> data) {
+        mData = data;
+    }
+
     @Override
     public Data getItem(int position) {
         return getCount() == 0 ? null : mData.get(position);

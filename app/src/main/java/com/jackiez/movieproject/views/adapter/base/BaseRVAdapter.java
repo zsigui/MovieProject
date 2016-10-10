@@ -47,6 +47,10 @@ public abstract class BaseRVAdapter<Data> extends RecyclerView.Adapter<BaseHolde
         mData = data;
     }
 
+    public List<Data> getData() {
+        return mData;
+    }
+
     @Override
     public void onClick(View v) {
         if (v.getTag(TAG_POSITION) == null) {

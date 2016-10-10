@@ -15,7 +15,7 @@ import com.jackiez.movieproject.databinding.ActivityMainBinding;
 import com.jackiez.movieproject.utils.UIUtil;
 import com.jackiez.movieproject.views.activity.MainActivity;
 import com.jackiez.movieproject.views.adapter.MainAdapter;
-import com.jackiez.movieproject.vp.view.base.AbsViewDelegateWithViewManager;
+import com.jackiez.movieproject.vp.view.base.AbsViewDelegateWithRefresh;
 
 /**
  * @author JackieZhuang
@@ -23,7 +23,7 @@ import com.jackiez.movieproject.vp.view.base.AbsViewDelegateWithViewManager;
  * @date 2016/10/4
  */
 
-public class MainActivityVD extends AbsViewDelegateWithViewManager<ActivityMainBinding> {
+public class MainActivityVD extends AbsViewDelegateWithRefresh<ActivityMainBinding> {
 
     public MainActivityVD(Context context) {
         super(context);

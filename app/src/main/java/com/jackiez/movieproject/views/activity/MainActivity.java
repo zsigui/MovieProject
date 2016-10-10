@@ -3,23 +3,21 @@ package com.jackiez.movieproject.views.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.jackiez.common.utils.Constants;
 import com.jackiez.movieproject.R;
 import com.jackiez.movieproject.model.entities.Movie;
 import com.jackiez.movieproject.model.entities.PageData;
 import com.jackiez.movieproject.model.rest.DataSource;
-import com.jackiez.movieproject.utils.AppDebugLog;
-import com.jackiez.movieproject.utils.NetworkUtil;
 import com.jackiez.movieproject.utils.ObservableUtil;
 import com.jackiez.movieproject.views.adapter.MainAdapter;
 import com.jackiez.movieproject.views.adapter.decoration.RecyclerBoundDecoration;
 import com.jackiez.movieproject.views.listener.OnFinishListener;
-import com.jackiez.movieproject.views.widget.layout.OnLoadMoreListener;
-import com.jackiez.movieproject.vp.presenter.AbsPresenterWithViewManager;
+import com.jackiez.movieproject.views.listener.OnItemClickListener;
+import com.jackiez.movieproject.vp.presenter.AbsPresentWithRefresh;
 import com.jackiez.movieproject.vp.view.MainActivityVD;
 
 import java.util.List;
@@ -29,13 +27,12 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AbsPresenterWithViewManager<List<Movie>, MainActivityVD>
-        implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener,
-        OnFinishListener, OnLoadMoreListener {
+public class MainActivity extends AbsPresentWithRefresh<List<Movie>, MainActivityVD>
+        implements NavigationView.OnNavigationItemSelectedListener, OnFinishListener, OnItemClickListener {
 
     private MainAdapter mAdapter;
-    protected boolean mInRefreshing = false;
-    protected boolean mInMoreLoading = false;
+    private Subscription mRefreshSubscription;
+    private Subscription mLoadMoreSubscription;
 
     @Override
     protected void processLogic(Bundle savedInstanceState) {
@@ -48,21 +45,17 @@ public class MainActivity extends AbsPresenterWithViewManager<List<Movie>, MainA
         );
     }
 
-    Subscription mRefreshSubscription;
+    @Override
+    protected void setListener() {
+        super.setListener();
+        mAdapter.setItemClickListener(this);
+    }
 
     @Override
-    protected void lazyLoad() {
-        if (mInRefreshing) {
-            return;
-        }
-        if (!NetworkUtil.isAvailable(this)) {
-            refreshFailed(true);
-            return;
-        }
-        refreshInit();
+    protected void loadRefreshDataAsync() {
         ObservableUtil.unsubscribe(mRefreshSubscription);
         mRefreshSubscription = DataSource.getInstance().getMovieEngineApi()
-                .getPopularMoviesByPage(Constants.API_KEY, page)
+                .getPopularMoviesByPage(Constants.API_KEY, FIRST_PAGE)
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.newThread())
                 .subscribe(new Subscriber<PageData<Movie>>() {
@@ -72,10 +65,9 @@ public class MainActivity extends AbsPresenterWithViewManager<List<Movie>, MainA
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
-                        AppDebugLog.e(AppDebugLog.TAG_DEBUG_INFO, e);
-                        refreshFailed(false);
+                        refreshFailed(false, e);
                         getViewDelegate().showDefaultSnack("数据加载失败!");
+
                     }
 
                     @Override
@@ -85,6 +77,38 @@ public class MainActivity extends AbsPresenterWithViewManager<List<Movie>, MainA
                     }
                 });
     }
+
+
+    @Override
+    protected void loadLoadMoreDataAsync() {
+        ObservableUtil.unsubscribe(mLoadMoreSubscription);
+        mLoadMoreSubscription = DataSource.getInstance().getMovieEngineApi()
+                .getPopularMoviesByPage(Constants.API_KEY, page)
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.newThread())
+                .subscribe(new Subscriber<PageData<Movie>>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        loadMoreFailed(false, e);
+                    }
+
+                    @Override
+                    public void onNext(PageData<Movie> moviePageData) {
+                        loadMoreSuccess();
+                        addMoreData(moviePageData.results);
+                    }
+                });
+    }
+
+    @Override
+    protected void addMoreData(@Nullable List<Movie> movies) {
+        mAdapter.addMoreData(movies);
+        mData = mAdapter.getData();
+    }
+
 
     @Override
     protected void bindData(@Nullable List<Movie> movies) {
@@ -150,84 +174,19 @@ public class MainActivity extends AbsPresenterWithViewManager<List<Movie>, MainA
     }
 
     @Override
-    public void onRefresh() {
-        lazyLoad();
-    }
-
-    public static final int FIRST_PAGE = 1;
-    protected int page = FIRST_PAGE;
-
-    private void refreshFailed(boolean isNetReason) {
-        if (isNetReason) {
-            getViewDelegate().showDefaultSnack("网络连接失败！");
-        }
-        mInRefreshing = false;
-        getViewDelegate().getBinding().splContainer.setRefreshing(false);
-        getViewDelegate().showError();
-    }
-
-    private void refreshSuccess() {
-        mInRefreshing = false;
-        getViewDelegate().getBinding().splContainer.setRefreshing(false);
-        // 交由 bindData 去控制显示
-//        getViewDelegate().showContent();
-        page = 1;
-    }
-
-    private void refreshInit() {
-        mInRefreshing = true;
-        if (mData == null || mData.isEmpty()) {
-            getViewDelegate().showLoading();
-        } else {
-            if (!getViewDelegate().getBinding().splContainer.isRefreshing()) {
-                getViewDelegate().getBinding().splContainer.setRefreshing(true);
-            }
-        }
-    }
-
-    private void loadMoreInit() {
-        mInMoreLoading = true;
-        getViewDelegate().getBinding().splContainer.setLoading(true);
-    }
-
-    private void loadMoreFailed(boolean isNetReason) {
-        if (isNetReason) {
-            getViewDelegate().showDefaultSnack("网络连接失败！");
-        }
-        mInMoreLoading = false;
-        getViewDelegate().getBinding().splContainer.setLoading(false);
-        getViewDelegate().showError();
-    }
-
-    private void loadMoreSuccess() {
-        mInMoreLoading = false;
-        page++;
-        getViewDelegate().getBinding().splContainer.setLoading(true);
+    public void onClick(View v) {
+        super.onClick(v);
     }
 
     @Override
     public void release() {
         ObservableUtil.unsubscribe(mRefreshSubscription);
+        ObservableUtil.unsubscribe(mLoadMoreSubscription);
         mRefreshSubscription = null;
     }
 
     @Override
-    public void onLoadMore() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getViewDelegate().getBinding().splContainer.setLoading(false);
-                    }
-                });
-            }
-        }).start();
+    public void itemClick(View v, int position, Object item) {
+
     }
 }

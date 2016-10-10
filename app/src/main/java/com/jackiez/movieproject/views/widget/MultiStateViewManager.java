@@ -120,11 +120,11 @@ public class MultiStateViewManager {
         return mContentView;
     }
 
-    public OnRetryOrEmptyListener getOnRetryListener() {
+    public OnRetryOrEmptyListener getOnRetryOrEmptyListener() {
         return mOnRetryListener;
     }
 
-    public void setOnRetryListener(OnRetryOrEmptyListener onRetryListener) {
+    public void setOnRetryOrEmptyListener(OnRetryOrEmptyListener onRetryListener) {
         mOnRetryListener = onRetryListener;
     }
 
