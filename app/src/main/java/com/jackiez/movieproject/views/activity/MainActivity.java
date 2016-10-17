@@ -1,18 +1,28 @@
 package com.jackiez.movieproject.views.activity;
 
+import android.animation.Animator;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.jackiez.common.utils.Constants;
+import com.jackiez.common.utils.KeyConst;
 import com.jackiez.movieproject.R;
+import com.jackiez.movieproject.common.GlobalCache;
 import com.jackiez.movieproject.model.entities.Movie;
 import com.jackiez.movieproject.model.entities.PageData;
 import com.jackiez.movieproject.model.rest.DataSource;
+import com.jackiez.movieproject.utils.AppDebugLog;
 import com.jackiez.movieproject.utils.ObservableUtil;
+import com.jackiez.movieproject.utils.UIUtil;
 import com.jackiez.movieproject.views.adapter.MainAdapter;
 import com.jackiez.movieproject.views.adapter.decoration.RecyclerBoundDecoration;
 import com.jackiez.movieproject.views.listener.OnFinishListener;
@@ -20,6 +30,7 @@ import com.jackiez.movieproject.views.listener.OnItemClickListener;
 import com.jackiez.movieproject.vp.presenter.AbsPresentWithRefresh;
 import com.jackiez.movieproject.vp.view.MainActivityVD;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import rx.Subscriber;
@@ -28,7 +39,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AbsPresentWithRefresh<List<Movie>, MainActivityVD>
-        implements NavigationView.OnNavigationItemSelectedListener, OnFinishListener, OnItemClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnFinishListener, OnItemClickListener<Movie> {
 
     private MainAdapter mAdapter;
     private Subscription mRefreshSubscription;
@@ -36,6 +47,7 @@ public class MainActivity extends AbsPresentWithRefresh<List<Movie>, MainActivit
 
     @Override
     protected void processLogic(Bundle savedInstanceState) {
+        UIUtil.setTranslucentStatusBar(this);
         super.processLogic(savedInstanceState);
 
         mAdapter = new MainAdapter(this);
@@ -88,7 +100,8 @@ public class MainActivity extends AbsPresentWithRefresh<List<Movie>, MainActivit
                 .unsubscribeOn(Schedulers.newThread())
                 .subscribe(new Subscriber<PageData<Movie>>() {
                     @Override
-                    public void onCompleted() {}
+                    public void onCompleted() {
+                    }
 
                     @Override
                     public void onError(Throwable e) {
@@ -175,6 +188,7 @@ public class MainActivity extends AbsPresentWithRefresh<List<Movie>, MainActivit
 
     @Override
     public void onClick(View v) {
+        AppDebugLog.d(AppDebugLog.TAG_DEBUG_INFO, "MainActivity.onClick()");
         super.onClick(v);
     }
 
@@ -186,7 +200,41 @@ public class MainActivity extends AbsPresentWithRefresh<List<Movie>, MainActivit
     }
 
     @Override
-    public void itemClick(View v, int position, Object item) {
+    public void itemClick(View v, int position, Movie item) {
 
+        final Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra(KeyConst.DATA, item);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String shareKey = "share" + position;
+            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this, v, shareKey
+            );
+            intent.putExtra(KeyConst.KEY, shareKey);
+            Drawable b = ((ImageView) v).getDrawable();
+            GlobalCache.sPhotoCache = new WeakReference<>(b);
+            startActivity(intent, optionsCompat.toBundle());
+        } else {
+            v.animate().scaleY(0).scaleX(0).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
     }
 }

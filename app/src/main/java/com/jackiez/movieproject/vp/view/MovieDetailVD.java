@@ -7,9 +7,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.jackiez.movieproject.R;
+import com.jackiez.movieproject.common.GlobalCache;
 import com.jackiez.movieproject.databinding.ActivityMovieDetailBinding;
 import com.jackiez.movieproject.model.entities.MovieDetail;
 import com.jackiez.movieproject.model.entities.MovieReview;
+import com.jackiez.movieproject.utils.BindingUtil;
+import com.jackiez.movieproject.utils.UIUtil;
+import com.jackiez.movieproject.views.activity.MovieDetailActivity;
 import com.jackiez.movieproject.vp.view.base.AbsViewDelegateWithViewManager;
 
 import java.util.List;
@@ -33,6 +37,10 @@ public class MovieDetailVD extends AbsViewDelegateWithViewManager<ActivityMovieD
 
     @Override
     public void processLogic(Bundle saveInstanceState) {
+        MovieDetailActivity activity = getActivity();
+        UIUtil.setTranslucentStatusBar(activity);
+//        UIUtil.fitViewMargin(mBinding.ltvName);
+
     }
 
     @Override
@@ -47,6 +55,12 @@ public class MovieDetailVD extends AbsViewDelegateWithViewManager<ActivityMovieD
 
     public void bindData(MovieDetail movie) {
         mBinding.setMovie(movie);
+        BindingUtil.setCompany(mBinding.tvCompany, movie.getProduction_companies());
+        if (GlobalCache.sPhotoCache != null) {
+            mBinding.ivMovieCover.setImageDrawable(GlobalCache.sPhotoCache.get());
+        } else {
+            BindingUtil.loadImage(mBinding.ivMovieCover, movie.getPoster_path());
+        }
     }
 
     public void bindReviews(List<MovieReview> reviews) {

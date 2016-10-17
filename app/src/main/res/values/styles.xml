@@ -16,18 +16,20 @@
 
     <style name = "AppRealTheme.PopupOverlay" parent = "ThemeOverlay.AppCompat.Light" />
 
-    <style name="MaterialMoviesHeaderTextView" parent="android:Widget.TextView">
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:minHeight">48dp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:visibility">gone</item>
-    </style>
+    <style name = "MaterialMoviesHeaderTextView" parent = "android:Widget.TextView" >
+        <item name = "android:gravity" >center_vertical</item >
+        <item name = "android:minHeight" >48dp</item >
+        <item name = "android:textAllCaps" >true</item >
+        <item name = "android:textStyle" >bold</item >
+    </style >
 
-    <style name="MaterialMoviesDetailField" parent="android:Widget.TextView">
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:lineSpacingExtra">6dp</item>
-        <item name="android:textColor">#FFF</item>
-        <item name="android:visibility">gone</item>
-    </style>
+    <style name = "MaterialMoviesDetailField" parent = "android:Widget.TextView" >
+        <item name = "android:gravity" >center_vertical</item >
+        <item name = "android:lineSpacingExtra" >6dp</item >
+        <item name = "android:textColor" >#FFF</item >
+    </style >
+
+    <style name = "DrawerStyle" >
+        <item name = "android:background" >@color/colorPrimary</item >
+    </style >
 </resources >

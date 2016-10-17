@@ -33,6 +33,26 @@ public class Movie extends BaseObservable implements Serializable {
     private boolean movieReady;
 
 
+    public Movie() {
+    }
+
+    public Movie(Movie m) {
+        if (m == null)
+            return;
+        setPoster_path(m.getPoster_path());
+        setPopularity(m.getPopularity());
+        setOverview(m.getOverview());
+        setAdult(m.getAdult());
+        setBackdrop_path(m.getBackdrop_path());
+        setId(m.getId());
+        setAdult(m.getAdult());
+        setOriginal_title(m.getOriginal_title());
+        setRelease_date(m.getRelease_date());
+        setTitle(m.getTitle());
+        setVote_average(m.getVote_average());
+        setVote_count(m.getVote_count());
+    }
+
     @Bindable
     public String getAdult() {
         return adult;

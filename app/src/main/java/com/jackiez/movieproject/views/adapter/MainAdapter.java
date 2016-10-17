@@ -49,11 +49,7 @@ public class MainAdapter extends BaseRVAdapter<Movie>{
             mBinding.ivMovieCover.setTag(TAG_POSITION, position);
             mBinding.ivMovieCover.setOnClickListener(listener);
 //            mBinding.tvMovieTitle.setText(movie.getTitle());
-//            String posterURL = RestConst.BASE_MOVIE_HOST + movie.getPoster_path();
-//            Glide.with(itemView.getContext())
-//                    .load(posterURL)
-//                    .centerCrop()
-//                    .into(mBinding.ivMovieCover);
+//            BindingUtil.loadImage(mBinding.ivMovieCover, movie.getPoster_path());
             mBinding.executePendingBindings();
         }
     }

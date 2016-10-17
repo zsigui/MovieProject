@@ -18,7 +18,7 @@
         <ImageView
                 android:id = "@+id/iv_movie_cover"
                 android:layout_width = "match_parent"
-                android:layout_height = "match_parent"
+                android:layout_height = "@dimen/di_item_movie_height"
                 android:scaleType = "centerCrop"
                 android:contentDescription="电影海报"
                 app:image = "@{ movie.poster_path }" />

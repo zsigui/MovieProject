@@ -8,10 +8,15 @@ import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.common.base.Strings;
 import com.jackiez.common.utils.RestConst;
+import com.jackiez.movieproject.R;
+import com.jackiez.movieproject.model.entities.ProductionCompany;
+
+import java.util.List;
 
 /**
  * @author JackieZhuang
@@ -29,12 +34,22 @@ public class BindingUtil {
         url = RestConst.BASE_PICS_SRC + url;
         Glide.with(iv.getContext())
                 .load(url)
-//                .placeholder(R.drawable.awesome)
-                .error(android.R.drawable.ic_delete)
+                .placeholder(R.drawable.london_flat)
+                .error(R.drawable.awesome)
                 .centerCrop()
-                .crossFade()
+                .dontAnimate()  // 如果不配置该句，会出现centerCrop等scaleType设置不执行情况
                 .into(iv);
 //        iv.setImageURI(url);
+    }
+
+    @BindingAdapter({"android:text"})
+    public static void setCompany(TextView tv, List<ProductionCompany> companies) {
+        if (companies == null) return;
+        StringBuilder sb = new StringBuilder();
+        for (ProductionCompany company : companies) {
+            sb.append(company.name).append(", ");
+        }
+        sb.delete(sb.length() - 2, sb.length());
     }
 
     public static <T extends ViewDataBinding> T create(Context context, @LayoutRes int layotuId, ViewGroup parent) {

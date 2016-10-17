@@ -139,6 +139,7 @@ public class RefreshLayout extends SwipeRefreshLayout {
                     }
                     if (childView instanceof RecyclerView) {
                         mRecyclerView = (RecyclerView) childView;
+                        wrapperRVAdapter(mRecyclerView);
                         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
                             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {

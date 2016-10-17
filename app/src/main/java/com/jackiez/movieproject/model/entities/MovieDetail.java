@@ -32,6 +32,13 @@ public class MovieDetail extends Movie {
     private int runtime;
     private boolean video;
 
+    public MovieDetail() {
+    }
+
+    public MovieDetail(Movie m) {
+        super(m);
+    }
+
     @Bindable
     public MovieCollection getBelongs_to_collection() {
         return belongs_to_collection;
@@ -181,5 +188,11 @@ public class MovieDetail extends Movie {
     public void setVideo(boolean video) {
         this.video = video;
         notifyPropertyChanged(BR.video);
+    }
+
+    public static MovieDetail from(Movie m) {
+        if (m == null)
+            return null;
+        return new MovieDetail(m);
     }
 }

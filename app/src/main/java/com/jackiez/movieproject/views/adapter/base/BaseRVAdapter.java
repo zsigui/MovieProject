@@ -19,7 +19,7 @@ public abstract class BaseRVAdapter<Data> extends RecyclerView.Adapter<BaseHolde
 
     protected List<Data> mData;
     protected Context mContext;
-    protected OnItemClickListener mItemClickListener;
+    protected OnItemClickListener<Data> mItemClickListener;
 
     public BaseRVAdapter(Context context) {
         this(context, null);
@@ -30,7 +30,7 @@ public abstract class BaseRVAdapter<Data> extends RecyclerView.Adapter<BaseHolde
         mContext = context;
     }
 
-    public void setItemClickListener(OnItemClickListener itemClickListener) {
+    public void setItemClickListener(OnItemClickListener<Data> itemClickListener) {
         mItemClickListener = itemClickListener;
     }
 

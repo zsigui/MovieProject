@@ -3,7 +3,6 @@ package com.jackiez.movieproject;
 import android.app.Application;
 import android.content.Context;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.jackiez.movieproject.utils.AppUtil;
 
 /**
@@ -46,7 +45,7 @@ public class MovieApp extends Application {
      * 在此执行只须在主进程初始的操作
      */
     private void appInitForMain() {
-        Fresco.initialize(this);
+//        Fresco.initialize(this);
     }
 
 }

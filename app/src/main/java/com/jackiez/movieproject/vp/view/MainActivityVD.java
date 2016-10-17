@@ -9,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.jackiez.movieproject.R;
 import com.jackiez.movieproject.databinding.ActivityMainBinding;
@@ -35,7 +36,7 @@ public class MainActivityVD extends AbsViewDelegateWithRefresh<ActivityMainBindi
     public void processLogic(Bundle saveInstanceState) {
         MainActivity activity = getActivity();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            UIUtil.setTransfluentStatusBar(activity);
+            UIUtil.setTranslucentStatusBar(activity);
         }
         activity.setSupportActionBar(mBinding.tbContainer);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -44,6 +45,12 @@ public class MainActivityVD extends AbsViewDelegateWithRefresh<ActivityMainBindi
         mBinding.dlContainer.setDrawerListener(toggle);
         toggle.syncState();
         mBinding.splContainer.setProgressViewOffset(true, -20, 120);
+        mBinding.splContainer.setEnabled(false);
+
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mBinding.tbContainer.getLayoutParams();
+        lp.topMargin = UIUtil.getStatusBarSize(activity);
+        mBinding.tbContainer.setLayoutParams(lp);
+
     }
 
     @Override
