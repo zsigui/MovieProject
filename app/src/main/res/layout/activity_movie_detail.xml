@@ -21,13 +21,15 @@
 
             <android.support.design.widget.AppBarLayout
                     android:layout_width = "match_parent"
-                    android:layout_height = "wrap_content" >
+                    android:layout_height = "wrap_content"
+                    android:background = "@android:color/transparent" >
 
 
                 <android.support.design.widget.CollapsingToolbarLayout
+                        android:id = "@+id/tool_layout"
                         android:layout_width = "match_parent"
                         android:layout_height = "wrap_content"
-                        app:contentScrim = "@color/colorPrimaryDark"
+                        app:contentScrim = "@color/colorPrimary"
                         app:layout_scrollFlags = "scroll|snap|exitUntilCollapsed" >
 
                     <ImageView
@@ -37,30 +39,27 @@
                             android:scaleType = "centerCrop"
                             android:contentDescription = "@null"
                             app:layout_collapseMode = "parallax" />
+
+
                 </android.support.design.widget.CollapsingToolbarLayout >
 
-                <android.support.v7.widget.Toolbar
-                        android:id = "@+id/toolbar"
-                        android:layout_width = "match_parent"
-                        android:layout_height = "wrap_content" >
 
-                    <com.jackiez.movieproject.views.widget.LobsterTextView
-                            android:id = "@+id/ltv_name"
-                            android:layout_width = "match_parent"
-                            android:layout_height = "wrap_content"
-                            android:paddingLeft = "48dp"
-                            android:paddingRight = "48dp"
-                            android:paddingBottom = "10dp"
-                            android:paddingTop = "10dp"
-                            android:gravity = "center"
-                            android:fontFamily = "sans-serif-medium"
-                            android:textSize = "28sp"
-                            android:textColor = "#FFF"
-                            android:ellipsize = "end"
-                            android:maxLines = "2"
-                            android:elevation = "4dp"
-                            android:text = "@{ movie.title }" />
-                </android.support.v7.widget.Toolbar >
+                <com.jackiez.movieproject.views.widget.LobsterTextView
+                        android:id = "@+id/ltv_name"
+                        android:layout_width = "match_parent"
+                        android:layout_height = "wrap_content"
+                        android:paddingLeft = "48dp"
+                        android:paddingRight = "48dp"
+                        android:paddingBottom = "10dp"
+                        android:background = "@color/colorPrimary"
+                        android:paddingTop = "35dp"
+                        android:gravity = "center"
+                        android:fontFamily = "sans-serif-medium"
+                        android:textSize = "28sp"
+                        android:textColor = "#FFF"
+                        android:ellipsize = "end"
+                        android:maxLines = "2"
+                        android:text = "@{ movie.title }" />
             </android.support.design.widget.AppBarLayout >
 
             <android.support.v4.widget.NestedScrollView
@@ -159,8 +158,9 @@
                     android:layout_height = "@dimen/fab_size"
                     android:layout_margin = "@dimen/fab_margin"
                     android:src = "@drawable/ic_fab_star"
-                    app:layout_anchor = "@id/toolbar"
-                    app:layout_anchorGravity = "end|top" />
+                    app:layout_anchor = "@id/ltv_name"
+                    app:layout_anchorGravity = "end|top"
+                    app:layout_behavior = "com.jackiez.movieproject.views.behavior.DisappearFabBehavior" />
 
         </android.support.design.widget.CoordinatorLayout >
 

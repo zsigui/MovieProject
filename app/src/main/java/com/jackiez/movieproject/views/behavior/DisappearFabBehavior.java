@@ -4,9 +4,10 @@ import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.jackiez.movieproject.utils.AppDebugLog;
 import com.jackiez.movieproject.utils.UIUtil;
 import com.jackiez.movieproject.views.widget.LobsterTextView;
 
@@ -17,8 +18,7 @@ import com.jackiez.movieproject.views.widget.LobsterTextView;
 public class DisappearFabBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
 
 
-    private int mStatusBar;
-    private int mFirstTop;
+    private int mStatusBarSize;
     private int mTotalDistance;
 
     public DisappearFabBehavior(Context context, AttributeSet attrs) {
@@ -27,38 +27,49 @@ public class DisappearFabBehavior extends CoordinatorLayout.Behavior<FloatingAct
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
-
-        Log.d("tag", "child = " + child  + ", dependency = " + dependency);
         return dependency instanceof LobsterTextView;
     }
 
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
-
-        initConf(child, dependency);
-
-
-        float fade = (mFirstTop - child.getY()) / mTotalDistance;
-        Log.d("tag", "fad = " + fade + ", statusBar = " + mStatusBar + ", firstTop = " + mFirstTop + ", c.getPivotY = " + child.getY()
-        + ", c.getY = " + child.getY() + ", d.getBottom = " + dependency.getBottom() + ", d.getHeight = " + dependency.getHeight());
-        if (fade > 1) {
-            fade = 1;
+        if (dependency.getParent() == null || !(dependency.getParent() instanceof ViewGroup)) {
+            return false;
         }
-        child.setScaleX(1-fade);
-        child.setScaleY(1-fade);
+        if (child.getTag() != null) {
+            return false;
+        }
+        ViewGroup vg = (ViewGroup) dependency.getParent();
 
+//        View v = vg.findViewById(R.id.v_tool);
+        initConf(child, dependency, vg);
+
+        float curDiffTop = mTotalDistance + vg.getTop(); // getTop() 为负数
+        float fade;
+        if (curDiffTop >= 2 * mStatusBarSize) {
+            fade = 1;
+        } else if (curDiffTop <= mStatusBarSize) {
+            fade = 0;
+        } else {
+            fade = (curDiffTop - mStatusBarSize) / (mStatusBarSize);
+        }
+        child.setScaleX(fade);
+        child.setScaleY(fade);
+
+        AppDebugLog.d(AppDebugLog.TAG_DEBUG_INFO, "getTop=" + dependency.getHeight());
+//        if (curDiffTop <= mStatusBarSize) {
+//            dependency.setPadding(0, mStatusBarSize, 0, 0);
+//        } else {
+//            dependency.setPadding(0, 0, 0, 0);
+//        }
         return true;
     }
 
-    private void initConf(FloatingActionButton child, View dependency) {
-        if (mStatusBar == 0) {
-            mStatusBar = UIUtil.getStatusBarSize(child.getContext());
-        }
-        if (mFirstTop == 0) {
-            mFirstTop = (int) dependency.getY();
+    private void initConf(FloatingActionButton child, View dependency, ViewGroup parent) {
+        if (mStatusBarSize == 0) {
+            mStatusBarSize = UIUtil.getStatusBarSize(child.getContext());
         }
         if (mTotalDistance == 0) {
-            mTotalDistance = mFirstTop - mStatusBar;
+            mTotalDistance = parent.getHeight() - dependency.getHeight() - mStatusBarSize;
         }
     }
 }
