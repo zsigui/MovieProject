@@ -41,27 +41,27 @@ public abstract class AbsPresentWithRefresh<Data, ViewDelegate extends AbsViewDe
 
     protected void loadMoreInit() {
         mInMoreLoading = true;
-        getViewDelegate().setLayoutLoading(true);
+        getViewDelegate().setLayoutLoading(RefreshLayout.STATE_LOADING);
     }
 
     protected void loadMoreFailed(boolean isNetReason, Throwable e) {
-        if (isNetReason) {
-            getViewDelegate().showDefaultSnack("网络连接失败！");
-        } else {
-            getViewDelegate().showDefaultSnack("获取更多数据失败！");
-        }
+//        if (isNetReason) {
+//            getViewDelegate().showDefaultSnack("网络连接失败！");
+//        } else {
+//            getViewDelegate().showDefaultSnack("获取更多数据失败！");
+//        }
         if (e != null) {
             e.printStackTrace();
             AppDebugLog.e(AppDebugLog.TAG_DEBUG_INFO, e);
         }
         mInMoreLoading = false;
-        getViewDelegate().setLayoutLoading(false);
+        getViewDelegate().setLayoutLoading(RefreshLayout.STATE_ERROR);
     }
 
     protected void loadMoreSuccess() {
         mInMoreLoading = false;
         page++;
-        getViewDelegate().setLayoutLoading(false);
+        getViewDelegate().setLayoutLoading(RefreshLayout.STATE_NONE);
     }
 
     @Override

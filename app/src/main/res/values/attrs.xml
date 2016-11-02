@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources >
+    <declare-styleable name = "FixedImageView" >
+        <attr name = "isXFixed" format = "boolean" />
+        <attr name = "outWidth" format = "dimension|reference" />
+        <attr name = "outHeight" format = "dimension|reference" />
+        <attr name = "paddingExcept" format = "boolean" />
+    </declare-styleable >
+</resources >

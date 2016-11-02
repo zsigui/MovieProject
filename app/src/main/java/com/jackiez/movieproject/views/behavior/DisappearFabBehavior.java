@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jackiez.movieproject.utils.AppDebugLog;
 import com.jackiez.movieproject.utils.UIUtil;
 import com.jackiez.movieproject.views.widget.LobsterTextView;
 
@@ -54,13 +53,6 @@ public class DisappearFabBehavior extends CoordinatorLayout.Behavior<FloatingAct
         }
         child.setScaleX(fade);
         child.setScaleY(fade);
-
-        AppDebugLog.d(AppDebugLog.TAG_DEBUG_INFO, "getTop=" + dependency.getHeight());
-//        if (curDiffTop <= mStatusBarSize) {
-//            dependency.setPadding(0, mStatusBarSize, 0, 0);
-//        } else {
-//            dependency.setPadding(0, 0, 0, 0);
-//        }
         return true;
     }
 

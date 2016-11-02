@@ -32,11 +32,11 @@ public abstract class AbsViewDelegateWithRefresh<Binding extends ViewDataBinding
         }
     }
 
-    public void setLayoutLoading(boolean isLoadMore) {
-        mRefreshLayout.setLoading(isLoadMore);
+    public void setLayoutLoading(int loadState) {
+            mRefreshLayout.setLoadState(loadState);
     }
 
     public void setCanLoadMore(boolean canLoadMore) {
-        mRefreshLayout.setCanShowLoad(canLoadMore);
+        mRefreshLayout.setCanShowFooter(canLoadMore);
     }
 }

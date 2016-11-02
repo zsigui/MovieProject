@@ -78,7 +78,7 @@ public class MainActivity extends AbsPresentWithRefresh<List<Movie>, MainActivit
                     @Override
                     public void onError(Throwable e) {
                         refreshFailed(false, e);
-                        getViewDelegate().showDefaultSnack("数据加载失败!");
+//                        getViewDelegate().showDefaultSnack("数据加载失败!");
 
                     }
 
