@@ -110,7 +110,7 @@ public class RefreshLayout extends SwipeRefreshLayout {
     }
 
     public void setViewFooterLoading(@LayoutRes int layoutId) {
-        setViewFooterLoading(LayoutInflater.from(getContext()).inflate(layoutId, null));
+        setViewFooterLoading(LayoutInflater.from(getContext()).inflate(layoutId, this, false));
     }
 
     public void setViewFooterNoMore(View view) {
@@ -118,7 +118,7 @@ public class RefreshLayout extends SwipeRefreshLayout {
     }
 
     public void setViewFooterNoMore(@LayoutRes int layoutId) {
-        setViewFooterNoMore(LayoutInflater.from(getContext()).inflate(layoutId, null));
+        setViewFooterNoMore(LayoutInflater.from(getContext()).inflate(layoutId, this, false));
     }
 
     public void setViewFooterError(View view) {
@@ -126,7 +126,7 @@ public class RefreshLayout extends SwipeRefreshLayout {
     }
 
     public void setViewFooterError(@LayoutRes int layoutId) {
-        setViewFooterError(LayoutInflater.from(getContext()).inflate(layoutId, null));
+        setViewFooterError(LayoutInflater.from(getContext()).inflate(layoutId, this, false));
     }
 
     private View getViewFooterLoading() {

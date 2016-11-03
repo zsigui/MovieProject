@@ -121,7 +121,8 @@ public class WithFooterRecyclerView extends RecyclerView {
     }
 
     public void setViewFooterLoading(@LayoutRes int layoutId) {
-        setViewFooterLoading(LayoutInflater.from(getContext()).inflate(layoutId, null));
+        // 采用 inflate(id, null) 的话外层的 layout_param 会失效
+        setViewFooterLoading(LayoutInflater.from(getContext()).inflate(layoutId, this, false));
     }
 
     public void setViewFooterNoMore(View view) {
@@ -129,7 +130,7 @@ public class WithFooterRecyclerView extends RecyclerView {
     }
 
     public void setViewFooterNoMore(@LayoutRes int layoutId) {
-        setViewFooterNoMore(LayoutInflater.from(getContext()).inflate(layoutId, null));
+        setViewFooterNoMore(LayoutInflater.from(getContext()).inflate(layoutId, this, false));
     }
 
     public void setViewFooterError(View view) {
@@ -137,7 +138,7 @@ public class WithFooterRecyclerView extends RecyclerView {
     }
 
     public void setViewFooterError(@LayoutRes int layoutId) {
-        setViewFooterError(LayoutInflater.from(getContext()).inflate(layoutId, null));
+        setViewFooterError(LayoutInflater.from(getContext()).inflate(layoutId, this, false));
     }
 
     private View getViewFooterLoading() {
