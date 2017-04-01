@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android = "http://schemas.android.com/apk/res/android"
+        xmlns:tools = "http://schemas.android.com/tools" >
+
+    <data >
+
+        <variable
+                name = "obj"
+                type = "com.jackiez.zgithub.test.vm.TestActivityVM" />
+    </data >
+
+    <LinearLayout
+            android:orientation = "vertical"
+            android:layout_width = "match_parent"
+            android:layout_height = "match_parent"
+            android:background="@android:color/transparent"
+            android:paddingTop = "20dp"
+            android:paddingBottom = "20dp" >
+
+        <!--<TextView-->
+                <!--android:layout_width = "match_parent"-->
+                <!--android:layout_height = "wrap_content"-->
+                <!--android:layout_margin = "10dp"-->
+                <!--tools:text = "名字内容"-->
+                <!--android:text = "@{obj.name}" />-->
+
+        <!--<TextView-->
+                <!--android:layout_width = "match_parent"-->
+                <!--android:layout_height = "wrap_content"-->
+                <!--android:layout_margin = "10dp"-->
+                <!--tools:text = "密码内容"-->
+                <!--android:text = "@{obj.password}" />-->
+
+        <!--<EditText-->
+                <!--android:id = "@+id/et_name"-->
+                <!--android:layout_width = "match_parent"-->
+                <!--android:layout_height = "wrap_content"-->
+                <!--android:layout_margin = "10dp"-->
+                <!--android:hint = "请输入名字" />-->
+
+        <!--<EditText-->
+                <!--android:id = "@+id/et_pwd"-->
+                <!--android:layout_width = "match_parent"-->
+                <!--android:layout_height = "wrap_content"-->
+                <!--android:layout_margin = "10dp"-->
+                <!--android:hint = "请输入密码" />-->
+
+        <Button
+                android:layout_margin = "10dp"
+                android:padding = "5dp"
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content"
+                android:onClick = "@{obj.onClick}"
+                android:text = "点击按钮事件" />
+
+        <FrameLayout
+                android:id="@+id/fl_list"
+                android:layout_margin = "10dp"
+                android:layout_width = "match_parent"
+                android:layout_height = "match_parent" />
+
+    </LinearLayout >
+</layout >

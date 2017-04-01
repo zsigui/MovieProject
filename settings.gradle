@@ -1,0 +1,1 @@
+include ':app', ':libraries:SGLog', ':libraries:SGStructure', ':libraries:SGWidget', ':libraries:SGUtility'

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android = "http://schemas.android.com/apk/res/android"
+        xmlns:tools = "http://schemas.android.com/tools" >
+
+    <data >
+
+        <variable
+                type = "com.jackiez.zgithub.test.vm.TestItemRepoVM"
+                name = "repo" />
+    </data >
+
+    <android.support.v7.widget.CardView
+            android:layout_width = "match_parent"
+            android:layout_height = "wrap_content"
+            android:layout_marginTop = "4dp"
+            android:layout_marginLeft = "8dp"
+            android:layout_marginBottom = "4dp"
+            android:layout_marginRight = "8dp" >
+
+        <LinearLayout
+                android:layout_width = "match_parent"
+                android:layout_height = "wrap_content"
+                android:orientation = "vertical"
+                android:paddingTop = "18dp"
+                android:paddingBottom = "14dp"
+                android:paddingLeft = "14dp"
+                android:paddingRight = "25dp" >
+
+            <TextView
+                    android:id = "@+id/tv_title"
+                    android:layout_width = "match_parent"
+                    android:layout_height = "wrap_content"
+                    tools:text = "th0r / webpack-bundle-analyzer"
+                    android:textColor = "@color/black_primary_dark"
+                    android:textSize = "14sp"
+                    android:text = '@{repo.owner + " / " + repo.name}' />
+
+            <TextView
+                    android:id = "@+id/tv_desc"
+                    android:layout_width = "match_parent"
+                    android:layout_height = "wrap_content"
+                    android:maxLines = "3"
+                    android:minLines = "1"
+                    android:ellipsize = "end"
+                    android:layout_below = "@id/tv_title"
+                    android:lineSpacingExtra = "4dp"
+                    android:paddingTop = "6dp"
+                    android:paddingBottom = "6dp"
+                    android:textColor = "@color/black_primary_light"
+                    android:textSize = "12sp"
+                    android:text = "@{repo.des}"
+                    tools:text = "Webpack plugin and CLI utility that represents bundle content as convenient interactive zoomable treemap and other " />
+
+            <TextView
+                    android:id = "@+id/tv_star_count"
+                    android:layout_width = "match_parent"
+                    android:layout_height = "wrap_content"
+                    android:layout_below = "@+id/tv_desc"
+                    android:textSize = "12sp"
+                    android:paddingBottom = "6dp"
+                    android:textColor = "@color/black_primary_light"
+                    android:text = "@{repo.meta}"
+                    tools:text = "621 stars today" />
+
+            <LinearLayout
+                    android:layout_width = "match_parent"
+                    android:layout_height = "wrap_content"
+                    android:gravity = "center_vertical" >
+
+                <TextView
+                        android:id = "@+id/tv_build_by"
+                        android:layout_width = "wrap_content"
+                        android:layout_height = "wrap_content"
+                        android:textColor = "@color/black_primary_light"
+                        android:textSize = "12sp"
+                        android:layout_below = "@id/tv_star_count"
+                        android:text = "Built by" />
+
+                <ImageView
+                        android:id = "@+id/iv1"
+                        android:layout_width = "24dp"
+                        android:layout_height = "24dp"
+                        android:background = "@color/blue_primary_light"
+                        android:layout_marginRight = "4dp"
+                        android:layout_marginLeft = "4dp"
+                        android:tint = "@color/blue_accent"
+                        tools:src = "@drawable/ic_about" />
+
+                <ImageView
+                        android:id = "@+id/iv2"
+                        android:layout_width = "24dp"
+                        android:layout_height = "24dp"
+                        android:background = "@color/blue_primary_light"
+                        android:layout_marginRight = "4dp"
+                        android:layout_marginLeft = "4dp"
+                        android:tint = "@color/blue_accent"
+                        tools:src = "@drawable/ic_about" />
+
+                <ImageView
+                        android:id = "@+id/iv3"
+                        android:layout_width = "24dp"
+                        android:layout_height = "24dp"
+                        android:background = "@color/blue_primary_light"
+                        android:layout_marginRight = "4dp"
+                        android:layout_marginLeft = "4dp"
+                        android:tint = "@color/blue_accent"
+                        tools:src = "@drawable/ic_about" />
+
+                <ImageView
+                        android:id = "@+id/iv4"
+                        android:layout_width = "24dp"
+                        android:layout_height = "24dp"
+                        android:background = "@color/blue_primary_light"
+                        android:layout_marginRight = "4dp"
+                        android:layout_marginLeft = "4dp"
+                        android:tint = "@color/blue_accent"
+                        tools:src = "@drawable/ic_about" />
+
+                <ImageView
+                        android:id = "@+id/iv5"
+                        android:layout_width = "24dp"
+                        android:layout_height = "24dp"
+                        android:background = "@color/blue_primary_light"
+                        android:layout_marginRight = "4dp"
+                        android:layout_marginLeft = "4dp"
+                        android:tint = "@color/blue_accent"
+                        tools:src = "@drawable/ic_about" />
+            </LinearLayout >
+        </LinearLayout >
+
+
+        <TextView
+                android:id = "@+id/tv_lang"
+                android:layout_width = "80dp"
+                android:layout_height = "80dp"
+                android:layout_gravity = "top|right"
+                android:background = "?attr/colorAccent"
+                android:gravity = "center_horizontal|bottom"
+                android:maxLength = "6"
+                android:maxLines = "1"
+                android:singleLine = "true"
+                android:paddingBottom = "4dp"
+                android:rotation = "45"
+                android:translationX = "40dp"
+                android:translationY = "-40dp"
+                tools:text = "Java"
+                android:text = "@{repo.language}"
+                android:textAppearance = "?android:textAppearanceLargeInverse"
+                android:textSize = "12dp" />
+
+        <ImageView
+                android:id = "@+id/iv_start"
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:contentDescription = "@null"
+                android:layout_gravity = "right|bottom"
+                android:padding = "8dp"
+                tools:src = "@drawable/ic_star_checked"
+                android:src = "@{repo.isStart? @drawable/ic_star_checked : @drawable/ic_star_unchecked}" />
+
+    </android.support.v7.widget.CardView >
+</layout >

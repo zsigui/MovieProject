@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android = "http://schemas.android.com/apk/res/android" >
+
+    <!-- 很奇怪这里的 FrameLayout 默认背景不是透明的, 所以需要显示指明减少一层绘制。然而，实际没太大区别 -->
+    <FrameLayout
+            android:background = "@android:color/transparent"
+            android:layout_width = "match_parent"
+            android:layout_height = "match_parent" >
+
+        <!-- 显示加载页面，由于打开必定显示，故此处直接设置 -->
+        <android.support.v4.widget.ContentLoadingProgressBar
+                android:id = "@+id/clpb_loading"
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:layout_gravity = "center"
+                style = "?android:attr/progressBarStyleLarge" />
+
+        <!-- 显示错误界面，当出现错误时再执行填充 -->
+        <ViewStub
+                android:id = "@+id/vs_error"
+                android:layout_width = "match_parent"
+                android:layout_height = "match_parent" />
+
+        <!-- 显示空数据界面，当出现获取不到数据时再执行填充 -->
+        <ViewStub
+                android:id = "@+id/vs_empty"
+                android:layout_width = "match_parent"
+                android:layout_height = "match_parent" />
+
+        <!-- 显示实际的内容界面，当获取到数据后再填充显示-->
+        <ViewStub
+                android:id = "@+id/vs_content"
+                android:layout_width = "match_parent"
+                android:layout_height = "match_parent" />
+
+    </FrameLayout >
+</layout >

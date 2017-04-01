@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android = "http://schemas.android.com/apk/res/android" >
+
+    <item
+            android:id = "@+id/mi_favos"
+            android:icon = "@drawable/ic_action_favo"
+            android:title = "我的收藏" />
+
+    <item
+            android:id = "@+id/mi_language"
+            android:title = "偏好语言" >
+
+        <menu >
+
+            <item
+                    android:id = "@+id/mi_custom"
+                    android:title = "自定义"
+                    android:icon = "@drawable/ic_action_custom" />
+            <item
+                    android:id = "@+id/mi_add"
+                    android:title = "添加"
+                    android:icon = "@drawable/ic_action_add" />
+
+            <item
+                    android:id = "@+id/mi_remove"
+                    android:title = "移除"
+                    android:icon = "@drawable/ic_action_remove" />
+
+        </menu >
+
+    </item >
+
+    <item
+            android:id = "@+id/mi_setting"
+            android:title = "设置" >
+
+        <menu >
+
+            <item
+                    android:id = "@+id/mi_theme"
+                    android:icon = "@drawable/ic_action_theme"
+                    android:title = "背景主题" />
+
+            <item
+                    android:id = "@+id/mi_about"
+                    android:icon = "@drawable/ic_about"
+                    android:title = "关于..." />
+
+        </menu >
+
+    </item >
+
+    <item android:title = "" ></item >
+</menu >
