@@ -1,5 +1,6 @@
 package com.jackiez.base.widget.stackview;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
@@ -21,8 +22,11 @@ public class StackTouchHelper implements View.OnTouchListener, AnimProgressListe
     private int mPointerId;
     private float mDownX;
     private float mDownY;
+
+    // 记录初始的状态，便于恢复
     private float mInitX;
     private float mInitY;
+    private boolean mNeedRecordFirstLocation;
 
     public StackTouchHelper(StackView stackView) {
         checkIsNotNull(stackView);
@@ -57,6 +61,12 @@ public class StackTouchHelper implements View.OnTouchListener, AnimProgressListe
                 mPointerId = event.getPointerId(0);
                 mDownX = event.getX();
                 mDownY = event.getY();
+                if (mNeedRecordFirstLocation) {
+                    mInitX = mLastObservable.getX();
+                    mInitY = mLastObservable.getY();
+                    mNeedRecordFirstLocation = false;
+                }
+                Log.d("test-test", "down x = " + mDownX + ", y = " + mDownY + ", x = " + mLastObservable.getX() + ", y = " + mLastObservable.getY());
                 return true;
             case MotionEvent.ACTION_MOVE:
                 float progress = 0.0f;
@@ -78,6 +88,7 @@ public class StackTouchHelper implements View.OnTouchListener, AnimProgressListe
                     mResetAnimator.cancel();
                 }
                 mResetAnimator = mLastObservable.animate();
+                Log.d("test-test", "init x = " + mInitX + ", y = " + mInitY);
                 mResetAnimator.x(mInitX);
                 mResetAnimator.y(mInitY);
                 mResetAnimator.setDuration(200);
@@ -107,8 +118,7 @@ public class StackTouchHelper implements View.OnTouchListener, AnimProgressListe
         if (v == null)
             return;
         mLastObservable = v;
-        mInitX = mLastObservable.getX();
-        mInitY = mLastObservable.getY();
+        mNeedRecordFirstLocation = true;
         mLastObservable.setOnTouchListener(this);
     }
 }

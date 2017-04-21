@@ -50,4 +50,13 @@
     <color name = "pink_primary_dark" >#C2185B</color >
     <color name = "pink_primary_light" >#F48FB1</color >
     <color name = "pink_accent" >#E91E63</color >
+
+    <color name = "c1">#FFCC80</color>
+    <color name = "c2">#CE93D8</color>
+    <color name = "c3">#F48FB1</color>
+    <color name = "c4">#0f9a9a</color>
+    <!--<color name = "c1">#77FFCC80</color>-->
+    <!--<color name = "c2">#77CE93D8</color>-->
+    <!--<color name = "c3">#77F48FB1</color>-->
+    <!--<color name = "c4">#77ef9a9a</color>-->
 </resources >

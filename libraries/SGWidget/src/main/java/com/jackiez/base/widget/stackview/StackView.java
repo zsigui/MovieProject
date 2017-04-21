@@ -2,24 +2,31 @@ package com.jackiez.base.widget.stackview;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Canvas;
+import android.graphics.RectF;
+import android.graphics.Region;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
-import android.widget.FrameLayout;
+
+import java.util.ArrayList;
 
 /**
  * Created by zsigui on 17-4-1.
  */
-public class StackView extends FrameLayout {
+public class StackView extends ViewGroup {
 
     private static final int ID_NEW_VIEW = 0x12455555;
     private static final int DEFAULT_ANIM_TIME = 200;
     private static final int DEFAULT_MAX_VISIBLE_VIEW_COUNT = 3;
-    private static final int DEFAULT_LAYER_PADDING_X = 50;
-    private static final int DEFAULT_LAYER_PADDING_Y = 50;
+    private static final int DEFAULT_LAYER_PADDING_X = 10;
+    private static final int DEFAULT_LAYER_PADDING_Y = 10;
+    private static final float DEFAULT_SCALE_FACTOR = 0.9f;
+    private static final boolean DEFAULT_AVOID_OVERDRAW = true;
     /**
      * 因为{@link #mBottomVisibleViewIndex}和{@link #mTopVisibleViewIndex}都是指明当前视图栈中最顶或最低视图的下标，
      * 初始情况下无视图，故为-1
@@ -43,16 +50,21 @@ public class StackView extends FrameLayout {
     /**
      * 当手势移除顶端的视图时，是否重新添加到栈底
      */
-    private boolean mIsLoop;
-    private boolean mForceReset;
+    private boolean mIsLoop = false;
+    private boolean mForceReset = true;
 
     private boolean mIsFirstLayout = true;
+
+    /**
+     * 是否执行切割，避免多视图重绘，默认为 true
+     */
+    private boolean mIsAvoidOverdraw = DEFAULT_AVOID_OVERDRAW;
 
     // 视图显示的内容
     private int mMaxVisibleViewCount = DEFAULT_MAX_VISIBLE_VIEW_COUNT;
 
     private int mRotationDegree;
-    private float mScaleFactor = 0.9f;
+    private float mScaleFactor = DEFAULT_SCALE_FACTOR;
     private int mTransformX;
     private int mTransformY;
 
@@ -60,6 +72,8 @@ public class StackView extends FrameLayout {
 
     private int mLayerSpaceX = DEFAULT_LAYER_PADDING_X;
     private int mLayerSpaceY = DEFAULT_LAYER_PADDING_Y;
+
+    private ArrayList<RectF> mForClipRectFs;
 
     private DataSetObserver mObserver = new DataSetObserver() {
         @Override
@@ -83,6 +97,9 @@ public class StackView extends FrameLayout {
     public StackView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mTouchHelper = new StackTouchHelper(this);
+        // 设置控件和子控件的绘制区域不受 padding 限制
+        setClipToPadding(false);
+        setClipChildren(false);
     }
 
     public void setAdapter(@NonNull Adapter adapter) {
@@ -105,87 +122,135 @@ public class StackView extends FrameLayout {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        setMeasuredDimension(width, height);
+    }
 
-//        if (!mForceReset || !changed)
-//            return;
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
         if (mAdapter == null || mAdapter.getCount() == 0) {
             mCurrentTopView = null;
             mBottomVisibleViewIndex = 0;
             removeAllViewsInLayout();
             mTouchHelper.unregisterObservable();
+            if (mForClipRectFs != null) {
+                mForClipRectFs.clear();
+            }
             return;
         }
 
         addNextItem();
 
-        int childCount = getChildCount();
+        reMeasureChild();
+
+        layoutChild();
+
+        mIsFirstLayout = false;
+        mForceReset = false;
+    }
+
+    private void reMeasureChild() {
+        if (!mForceReset) {
+            return;
+        }
+        Log.d("test-debug", "reMeasureChild");
         View child;
-        int cL, cR, cT, cB;
-        float scale;
+        int childCount = getChildCount();
+        for (int layer = 0; layer < childCount; layer ++) {
+            child = getChildAt(layer);
+
+            // 层级计算，层级越高，放大倍数越小
+            float scale = (float) Math.pow(mScaleFactor, childCount - layer - 1);
+
+            int width = (int) (scale * (getMeasuredWidth() - getPaddingLeft() - getPaddingRight()));
+            int height = (int) (scale * (getMeasuredHeight() - getPaddingTop() - getPaddingBottom()));
+
+            LayoutParams lp = child.getLayoutParams();
+
+            int measureSpecWidth = MeasureSpec.AT_MOST;
+            int measureSpecHeight = MeasureSpec.AT_MOST;
+
+            if (lp.width == LayoutParams.MATCH_PARENT) {
+                measureSpecWidth = MeasureSpec.EXACTLY;
+            }
+            if (lp.height == LayoutParams.MATCH_PARENT) {
+                measureSpecHeight = MeasureSpec.EXACTLY;
+            }
+
+            child.measure(measureSpecWidth | width, measureSpecHeight | height);
+        }
+    }
+
+    private void layoutChild() {
+        Log.d("test-debug", "layoutChild");
+        int childCount = getChildCount();
+
         // 此处zOrder越大，说明层级越底（这是因为添加顺序造成的）
-        int x;
-        int y;
         if (childCount > 0) {
             mTouchHelper.unregisterObservable();
             mCurrentTopView = getChildAt(childCount - 1);
             mTouchHelper.registerObservable(mCurrentTopView);
         }
-        for (int zOrder = 0; zOrder < childCount; zOrder++) {
-            child = getChildAt(zOrder);
-
-            scale = mScaleFactor * (100 - childCount * 6 + zOrder * 5) / 100.0f;
-
-//            int width = (int) (child.getMeasuredWidth() * scale);
-//            int height = (int) (child.getMeasuredHeight() * scale);
-
-            int newPosY = mLayerSpaceX * (childCount - 1 - zOrder);
-            int newPosX = mLayerSpaceX * (childCount - 1 - zOrder);
 
 
-            cL = getPaddingLeft();
-            cR = cL + child.getMeasuredWidth();
-
-            cT = getPaddingTop();
-            cB = cT + child.getMeasuredHeight();
-
-
-            child.layout(cL, cT, cR, cB);
-
-            if (mIsFirstLayout) {
-                child.setTag(ID_NEW_VIEW, false);
-                child.setScaleX(scale);
-                child.setScaleY(scale);
-                child.setY(newPosY);
-                child.setX(newPosX);
-            } else {
-                boolean isNewView = (boolean) child.getTag(ID_NEW_VIEW);
-                if (isNewView) {
-                    child.setTag(ID_NEW_VIEW, false);
-                    child.setScaleX(scale);
-                    child.setScaleY(scale);
-                    child.setY(newPosY);
-                    child.setX(newPosX);
-                    child.setAlpha(0);
-                }
-                child.animate()
-                        .scaleY(scale)
-                        .scaleX(scale)
-                        .y(newPosY)
-                        .x(newPosX)
-                        .alpha(1.0f)
-                        .setDuration(DEFAULT_ANIM_TIME);
+        if (mIsAvoidOverdraw) {
+            if (mForClipRectFs == null) {
+                mForClipRectFs = new ArrayList<>(childCount);
+            }
+            // 填补多余的空位
+            for (int i = mForClipRectFs.size() - 1; i < childCount; i++) {
+                mForClipRectFs.add(new RectF());
             }
         }
 
-        mIsFirstLayout = false;
+        View child;
+        // 0, 1, 2, 3 -> l, r, t, b
+        int[][] s = new int[childCount][4];
+        for (int layer = childCount - 1; layer >= 0; layer--) {
+            child = getChildAt(layer);
+            if (layer == childCount - 1) {
+                s[layer][0] = getPaddingLeft();
+                s[layer][1] = s[layer][0] + child.getMeasuredWidth();
+                s[layer][2] = getPaddingTop();
+                s[layer][3] = s[layer][2] + child.getMeasuredHeight();
+            } else {
+                s[layer][1] = s[layer + 1][1] + mLayerSpaceX;
+                s[layer][0] = s[layer][1] - child.getMeasuredWidth();
+                s[layer][3] = s[layer + 1][3] + mLayerSpaceY;
+                s[layer][2] = s[layer][3] - child.getMeasuredHeight();
+            }
+//            s[layer][2] = (getMeasuredHeight() - child.getMeasuredHeight()) >> 1;
+//            s[layer][3] = s[layer][2] + child.getMeasuredHeight();
+
+            // 将超出父视图的多余的部分切割掉
+            if (s[layer][1] > getMeasuredWidth()) {
+                s[layer][1] = getMeasuredWidth();
+            }
+            if (s[layer][3] > getMeasuredHeight())
+                s[layer][3] = getMeasuredHeight();
+
+            child.layout(s[layer][0], s[layer][2], s[layer][1], s[layer][3]);
+
+            if (mIsAvoidOverdraw) {
+                mForClipRectFs.get(layer).set(s[layer][0], s[layer][2], s[layer][1], s[layer][3]);
+            }
+
+//            boolean isNewView = (boolean) child.getTag(ID_NEW_VIEW);
+//            if (isNewView) {
+//                child.setTag(ID_NEW_VIEW, false);
+//            }
+        }
     }
 
     private void addNextItem() {
+        Log.d("test-debug", "addNextItem");
         int itemCount = mAdapter.getCount();
         // 如果执行的是可以循环的
         int nextBottomVisibleViewIndex;
+        Log.d("test-test", "addNextItem : " + getChildCount() + ", itemCount = " + itemCount);
         for (int i = getChildCount(); i < mMaxVisibleViewCount; i++) {
             nextBottomVisibleViewIndex = mBottomVisibleViewIndex + 1;
             if (nextBottomVisibleViewIndex == itemCount) {
@@ -224,23 +289,47 @@ public class StackView extends FrameLayout {
             defaultLp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
-
-        int width = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
-        int height = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-
-        int measureSpecWidth = MeasureSpec.AT_MOST;
-        int measureSpecHeight = MeasureSpec.AT_MOST;
-
-        if (defaultLp.width == LayoutParams.MATCH_PARENT) {
-            measureSpecWidth = MeasureSpec.EXACTLY;
-        }
-        if (defaultLp.height == LayoutParams.MATCH_PARENT) {
-            measureSpecHeight = MeasureSpec.EXACTLY;
-        }
-
-        child.measure(measureSpecWidth | width, measureSpecHeight | height);
         child.setTag(ID_NEW_VIEW, true);
         addViewInLayout(child, 0, defaultLp, true);
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        if (mIsAvoidOverdraw) {
+            /*
+            思路：
+            1. 最顶层视图由于可以被触摸滑动，所以 canvas 不进行剪切，只对其下视图进行剪切
+            2. 对非顶层视图绘制区域剪切包括(以A->B->C指代层级视图，以V指代整个canvas)：
+                对于 B，有 B ∩ ( V - A )
+                对于 C，有 C ∩ ( V - A ∪ B )
+                对于 D，有 D ∩ ( V - A ∪ B ∪ C )
+             */
+            View child;
+            int childCount = getChildCount();
+            if (childCount > 0) {
+                int saveCount;
+                // 设置 ClipRect 用于绘制时剔除 Overdraw 的部分
+                for (int zOrder = 0; zOrder < childCount - 1; zOrder++) {
+                    child = getChildAt(zOrder);
+                    saveCount = canvas.save();
+                    for (int k = zOrder + 1; k < childCount - 1; k++) {
+                        canvas.clipRect(mForClipRectFs.get(k), Region.Op.DIFFERENCE);
+                    }
+                    canvas.clipRect(mForClipRectFs.get(zOrder), Region.Op.INTERSECT);
+                    drawChild(canvas, child, getDrawingTime());
+                    canvas.restoreToCount(saveCount);
+                }
+
+                // 绘制顶层，对于顶层由于需要执行拖曳等动作，故无须剪切显示区域
+                saveCount = canvas.save();
+                child = getChildAt(childCount - 1);
+                drawChild(canvas, child, getDrawingTime());
+                canvas.restoreToCount(saveCount);
+            }
+        } else {
+            // 不避免重绘的情况下，直接调用父类方法即可
+            super.dispatchDraw(canvas);
+        }
     }
 
     public boolean isTopView(View v) {
@@ -249,6 +338,23 @@ public class StackView extends FrameLayout {
 
     public void removeTopView() {
         if (mCurrentTopView != null) {
+            Log.d("test-test", "removeTopView : " + mTopVisibleViewIndex);
+            mCurrentTopView.setAlpha(0);
+            for (int i = getChildCount() - 2; i >= 0; i --) {
+                View self = getChildAt(i);
+                View old = getChildAt(i + 1);
+
+                float scaleX = ((float) old.getWidth()) / self.getWidth();
+                float scaleY = ((float) old.getHeight()) / self.getHeight();
+                Log.d("test-test", "x = " + old.getX() + ", y = " + old.getY() + ", sx = " + scaleX + ", sy = " + scaleY);
+                self.animate()
+                        .x(old.getX())
+                        .y(old.getY())
+                        .setDuration(DEFAULT_ANIM_TIME)
+                        .start();
+            }
+
+
             addViewForRecycled(mTopVisibleViewIndex, mCurrentTopView);
             removeView(mCurrentTopView);
             mCurrentTopView = null;
@@ -270,6 +376,7 @@ public class StackView extends FrameLayout {
         mForceReset = true;
         removeAllViewsInLayout();
         requestLayout();
+        invalidate();
     }
 
     private View getRecycledView(int pos) {

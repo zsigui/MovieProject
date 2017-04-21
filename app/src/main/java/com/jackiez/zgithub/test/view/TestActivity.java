@@ -1,6 +1,5 @@
 package com.jackiez.zgithub.test.view;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -26,7 +25,7 @@ public class TestActivity extends BaseBindingActivity<TestActivityBinding, TestA
 
 //    TestFragment mFragment;
 
-    int[] colors = new int[]{Color.BLUE, Color.CYAN, Color.YELLOW, Color.GREEN};
+    int[] colors;
 
     private ArrayList<String> data;
     public static class Holder {
@@ -78,6 +77,30 @@ public class TestActivity extends BaseBindingActivity<TestActivityBinding, TestA
         };
         getBinding().stack.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        getBinding().btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        getBinding().btnLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getBinding().stack.removeTopView();
+            }
+        });
+        getBinding().btnRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        getBinding().btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getBinding().stack.resetStack();
+            }
+        });
     }
 
     private void initData() {
@@ -85,6 +108,11 @@ public class TestActivity extends BaseBindingActivity<TestActivityBinding, TestA
         for (int i = 0; i < 4; i++) {
             data.add("test " + i);
         }
+        colors = new int[4];
+        colors[3] = getResources().getColor(R.color.c1);
+        colors[2] = getResources().getColor(R.color.c2);
+        colors[1] = getResources().getColor(R.color.c3);
+        colors[0] = getResources().getColor(R.color.c4);
     }
 
     @Override
