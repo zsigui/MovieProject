@@ -1,6 +1,5 @@
-package com.jackiez.zgithub.vm;
+package com.jackiez.zgithub.vm.activity;
 
-import com.google.common.eventbus.EventBus;
 import com.jackiez.base.viewmodel.BaseActivityVM;
 import com.jackiez.zgithub.view.activity.MainActivity;
 
@@ -8,20 +7,18 @@ import com.jackiez.zgithub.view.activity.MainActivity;
  * Created by zsigui on 17-3-20.
  */
 
-public class MainVM extends BaseActivityVM<MainActivity> {
+public class AMainVM extends BaseActivityVM<MainActivity> {
 
-    public MainVM(MainActivity activity) {
+    public AMainVM(MainActivity activity) {
         super(activity);
     }
 
     @Override
     public void registerListener() {
-        new EventBus().register(this);
     }
 
     @Override
     public void unregisterListener() {
-        new EventBus().unregister(this);
     }
 
     @Override

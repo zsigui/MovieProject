@@ -10,13 +10,16 @@ import android.view.ViewStub;
 import com.jackiez.base.view.bingding.BaseBindingFragment;
 import com.jackiez.zgithub.R;
 import com.jackiez.zgithub.databinding.FragmentBaseDefaultBinding;
-import com.jackiez.zgithub.vm.fragment.DefaultBaseVM;
+import com.jackiez.zgithub.util.ViewUtil;
+import com.jackiez.zgithub.vm.fragment.FDefaultBaseVM;
 
 /**
  * Created by zsigui on 17-3-27.
  */
 
-public abstract class DefaultBaseFragment<VM extends DefaultBaseVM> extends BaseBindingFragment<FragmentBaseDefaultBinding, VM> {
+public abstract class DefaultBaseFragment<VM extends FDefaultBaseVM>
+        extends BaseBindingFragment<FragmentBaseDefaultBinding, VM>
+        implements View.OnClickListener {
 
     private static final int COUNT_INDEX = 4;
     protected static final int INDEX_ID_LOADING = 0;
@@ -38,7 +41,7 @@ public abstract class DefaultBaseFragment<VM extends DefaultBaseVM> extends Base
      */
     @LayoutRes
     public int getErrorLayoutId() {
-        return 0;
+        return R.layout.fragment_base_vs_error;
     }
 
     /**
@@ -46,7 +49,7 @@ public abstract class DefaultBaseFragment<VM extends DefaultBaseVM> extends Base
      */
     @LayoutRes
     public int getEmptyLayoutId() {
-        return 0;
+        return R.layout.fragment_base_vs_empty;
     }
 
     /**
@@ -108,6 +111,22 @@ public abstract class DefaultBaseFragment<VM extends DefaultBaseVM> extends Base
      * @param index 当前填充的视图下标
      */
     protected void inflateCallback(int index) {
+        switch (index) {
+            case INDEX_ID_CONTENT:
+
+                break;
+            case INDEX_ID_ERROR:
+                View v = mStateViews[index];
+                ViewUtil.findViewById(v, R.id.btn_retry)
+                        .setOnClickListener(this);
+                break;
+        }
+    }
+
+    @Override
+    public void onLazyInitView(@Nullable Bundle savedInstanceState) {
+        showLoading();
+        getVModel().lazyLoad();
     }
 
     /**
@@ -155,5 +174,14 @@ public abstract class DefaultBaseFragment<VM extends DefaultBaseVM> extends Base
 
     public void showEmpty() {
         showView(INDEX_ID_EMPTY);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_retry:
+                onLazyInitView(getArguments());
+                break;
+        }
     }
 }

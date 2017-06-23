@@ -63,7 +63,7 @@ public class TestActivity extends BaseBindingActivity<TestActivityBinding, TestA
             public View getView(int position, View convertView, ViewGroup parent) {
                 Holder holder;
                 if (convertView == null) {
-                    convertView =  LayoutInflater.from(getApplicationContext()).inflate(R.layout.stack_view, parent, false);
+                    convertView =  LayoutInflater.from(getApplicationContext()).inflate(R.layout.test_stack_view, parent, false);
                     holder = new Holder();
                     holder.tv = (TextView) convertView.findViewById(R.id.tv_content);
                     convertView.setTag(holder);
@@ -76,7 +76,7 @@ public class TestActivity extends BaseBindingActivity<TestActivityBinding, TestA
             }
         };
         getBinding().stack.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
         getBinding().btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +86,8 @@ public class TestActivity extends BaseBindingActivity<TestActivityBinding, TestA
         getBinding().btnLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getBinding().stack.removeTopView();
+//                getBinding().stack.removeTopView();
+                getBinding().stack.showPrevious();
             }
         });
         getBinding().btnRight.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +99,8 @@ public class TestActivity extends BaseBindingActivity<TestActivityBinding, TestA
         getBinding().btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getBinding().stack.resetStack();
+//                getBinding().stack.resetStack();
+                getBinding().stack.showNext();
             }
         });
     }

@@ -33,6 +33,7 @@ public class NetDataSource {
     private static final int READ_TIMEOUT = 60;
     private static final int CONNECT_TIMEOUT = 30;
     private static final int WRITE_TIMEOUT = 60;
+    private static final int CACHE_SIZE = 100 * 1024 * 1024;
     private static final String BASE_HOST = "https://api.github.com/";
 
     private static Retrofit mDefaultRetrofit;
@@ -104,7 +105,7 @@ public class NetDataSource {
 
     private Cache createDefaultCache() {
         File httpCacheDir = FileUtil.getOwnCacheDirectory(ZGitHubApp.get(), DataConfig.NET_CACHE, true);
-        return httpCacheDir == null ? null : new Cache(httpCacheDir, 100 * 1024 * 1024);
+        return httpCacheDir == null ? null : new Cache(httpCacheDir, CACHE_SIZE);
     }
 
 }

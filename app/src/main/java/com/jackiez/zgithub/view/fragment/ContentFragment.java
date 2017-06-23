@@ -3,12 +3,12 @@ package com.jackiez.zgithub.view.fragment;
 import android.os.Bundle;
 
 import com.jackiez.zgithub.R;
-import com.jackiez.zgithub.vm.fragment.ContentVM;
+import com.jackiez.zgithub.vm.fragment.FContentVM;
 
 /**
  * Created by zsigui on 17-3-24.
  */
-public class ContentFragment extends DefaultBaseFragment<ContentVM>{
+public class ContentFragment extends DefaultBaseFragment<FContentVM>{
 
 
     public static ContentFragment newInstance(String type) {
@@ -20,8 +20,8 @@ public class ContentFragment extends DefaultBaseFragment<ContentVM>{
     }
 
     @Override
-    protected ContentVM createVM() {
-        return new ContentVM(this);
+    protected FContentVM createVM() {
+        return new FContentVM(this);
     }
 
     @Override

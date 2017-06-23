@@ -1,14 +1,14 @@
 package com.jackiez.zgithub.test.vm;
 
-import com.google.common.eventbus.Subscribe;
+import com.jackiez.base.rxbus2.RxBus;
+import com.jackiez.base.rxbus2.Subscribe;
 import com.jackiez.base.util.AppDebugLog;
-import com.jackiez.zgithub.test.BusSingleton;
 import com.jackiez.zgithub.test.Mapper;
 import com.jackiez.zgithub.test.api.NetDataProvider;
 import com.jackiez.zgithub.test.data.ErrorOp;
 import com.jackiez.zgithub.test.data.Repo;
 import com.jackiez.zgithub.test.view.TestFragment;
-import com.jackiez.zgithub.vm.fragment.DefaultBaseVM;
+import com.jackiez.zgithub.vm.fragment.FDefaultBaseVM;
 
 import java.util.List;
 
@@ -16,22 +16,22 @@ import java.util.List;
  * Created by zsigui on 17-3-28.
  */
 
-public class TestFragmentVM extends DefaultBaseVM<TestFragment> {
+public class TestFragmentVMF extends FDefaultBaseVM<TestFragment> {
 
-    public TestFragmentVM(TestFragment fragment) {
+    public TestFragmentVMF(TestFragment fragment) {
         super(fragment);
     }
 
     @Override
     public void registerListener() {
         super.registerListener();
-        BusSingleton.get().register(this);
+        RxBus.get().register(this);
     }
 
     @Override
     public void unregisterListener() {
         super.unregisterListener();
-        BusSingleton.get().unregister(this);
+        RxBus.get().unregister(this);
     }
 
     @Override
@@ -58,6 +58,7 @@ public class TestFragmentVM extends DefaultBaseVM<TestFragment> {
         getFragment().updateView(repos);
     }
 
+    @Subscribe
     public void handleError(ErrorOp err) {
         AppDebugLog.d(AppDebugLog.TAG_UTIL, "显示错误内容: " + (err != null ? err.t.toString() : "null"));
         if (err != null && err.cmd == NetDataProvider.CMD.GET_REPO) {

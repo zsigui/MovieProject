@@ -33,7 +33,7 @@ import okhttp3.Request;
  */
 public interface Call<T> extends Cloneable {
   /**
-   * Synchronously send the request and return its response.
+   * Synchronously post the request and return its response.
    *
    * @throws IOException if a problem occurred talking to the server.
    * @throws RuntimeException (and subclasses) if an unexpected error occurs creating the request
@@ -42,7 +42,7 @@ public interface Call<T> extends Cloneable {
   Response<T> execute() throws IOException;
 
   /**
-   * Asynchronously send the request and notify {@code callback} of its response or if an error
+   * Asynchronously post the request and notify {@code callback} of its response or if an error
    * occurred talking to the server, creating the request, or processing the response.
    */
   void enqueue(Callback<T> callback);

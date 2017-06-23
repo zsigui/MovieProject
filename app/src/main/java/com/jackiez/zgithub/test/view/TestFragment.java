@@ -14,7 +14,7 @@ import com.jackiez.zgithub.databinding.TestFragmentContentBinding;
 import com.jackiez.zgithub.test.adapter.MultiRecylerAdapter;
 import com.jackiez.zgithub.test.adapter.TestRepoProvider;
 import com.jackiez.zgithub.test.view.layoutmanager.DefaultLinearLayoutManager;
-import com.jackiez.zgithub.test.vm.TestFragmentVM;
+import com.jackiez.zgithub.test.vm.TestFragmentVMF;
 import com.jackiez.zgithub.test.vm.TestItemRepoVM;
 import com.jackiez.zgithub.view.fragment.DefaultBaseFragment;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * Created by zsigui on 17-3-28.
  */
 
-public class TestFragment extends DefaultBaseFragment<TestFragmentVM> implements WithFooterRecyclerView.OnLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+public class TestFragment extends DefaultBaseFragment<TestFragmentVMF> implements WithFooterRecyclerView.OnLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
     private MultiTypeAdapter mAdapter;
     public List<TestItemRepoVM> mData;
@@ -40,8 +40,8 @@ public class TestFragment extends DefaultBaseFragment<TestFragmentVM> implements
     }
 
     @Override
-    protected TestFragmentVM createVM() {
-        return new TestFragmentVM(this);
+    protected TestFragmentVMF createVM() {
+        return new TestFragmentVMF(this);
     }
 
     @Override
@@ -86,6 +86,10 @@ public class TestFragment extends DefaultBaseFragment<TestFragmentVM> implements
         mContentBinding.rvContent.setOnLoadListener(this);
         // 缓存优化设置，设置之后提升效果明显，默认缓存数量只有2（即上下，所以容易出现卡顿）
         mContentBinding.rvContent.setItemViewCacheSize(10);
+        mContentBinding.rvContent.setOnClickListener((view) -> {
+
+        });
+
         mContentBinding.rvContent.setDrawingCacheEnabled(true);
         mContentBinding.rvContent.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         mContentBinding.srflContainer.setOnRefreshListener(this);
@@ -115,4 +119,5 @@ public class TestFragment extends DefaultBaseFragment<TestFragmentVM> implements
             mContentBinding.srflContainer.setRefreshing(false);
         }
     }
+
 }

@@ -3,7 +3,6 @@ package com.jackiez.zgithub.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.google.common.eventbus.EventBus;
 import com.jackiez.zgithub.model.net.NetRestProvider;
 import com.jackiez.zgithub.model.net.entity.RespUser;
 import com.jackiez.zgithub.model.net.rx.BaseObserver;
@@ -29,7 +28,6 @@ public class DataRepository {
         BaseObserver<RespUser> observer = new BaseObserver<RespUser>() {
             @Override
             public void onNext(RespUser value) {
-                new EventBus().post("");
             }
         };
         NetRestProvider.getUserApi().loginAuth(auth)

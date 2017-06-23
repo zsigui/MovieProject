@@ -24,7 +24,6 @@ public abstract class BaseBindingFragment<B extends ViewDataBinding, VM extends 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable

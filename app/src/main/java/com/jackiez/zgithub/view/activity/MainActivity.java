@@ -17,17 +17,17 @@ import com.jackiez.zgithub.R;
 import com.jackiez.zgithub.adapter.ToolbarSpinnerAdapter;
 import com.jackiez.zgithub.databinding.ActivityMainBinding;
 import com.jackiez.zgithub.databinding.ViewAcMainToolbarBinding;
-import com.jackiez.zgithub.vm.MainVM;
+import com.jackiez.zgithub.vm.activity.AMainVM;
 
 /**
  * Created by zsigui on 16-10-25.
  */
-public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainVM> implements AdapterView
+public class MainActivity extends BaseBindingActivity<ActivityMainBinding, AMainVM> implements AdapterView
         .OnItemSelectedListener {
 
     @Override
-    protected MainVM createVM() {
-        return new MainVM(this);
+    protected AMainVM createVM() {
+        return new AMainVM(this);
     }
 
     @Override

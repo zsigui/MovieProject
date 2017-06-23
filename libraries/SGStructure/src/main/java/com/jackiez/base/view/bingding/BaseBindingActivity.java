@@ -1,6 +1,5 @@
 package com.jackiez.base.view.bingding;
 
-import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -52,7 +51,7 @@ public abstract class BaseBindingActivity<B extends ViewDataBinding, VM extends 
      * 当View存在自定义的绑定配置时，覆写该方法传递组件
      * @return 默认情况下返回 null
      */
-    protected DataBindingComponent getCustomBindingComponent() {
+    protected android.databinding.DataBindingComponent getCustomBindingComponent() {
         return null;
     }
 

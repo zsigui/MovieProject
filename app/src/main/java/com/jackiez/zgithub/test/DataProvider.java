@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.jackiez.base.assist.rx.ApiException;
 import com.jackiez.base.common.ErrStatus;
+import com.jackiez.base.rxbus2.RxBus;
 import com.jackiez.base.util.AppDebugLog;
 import com.jackiez.base.util.NetworkUtil;
 import com.jackiez.zgithub.test.data.Error;
@@ -337,7 +338,7 @@ public class DataProvider {
                         if (value.isSuccess()) {
                             AppDebugLog.d(AppDebugLog.TAG_UTIL, "value.isSuccess");
                             // 实际这里可以通过BUS直接发送订阅事件，Test处订阅事件
-                            BusSingleton.get().post(value.data);
+                            RxBus.get().post(value.data);
                         } else {
                             // 这里是处理服务端返回的错误信息
                             if (value.e == null) {

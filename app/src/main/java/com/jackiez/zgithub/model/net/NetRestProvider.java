@@ -14,7 +14,6 @@ public class NetRestProvider {
     private static RepoApi sRepoApi;
     private static SearchApi sSearchApi;
 
-
     /**
      * 获取请求获取用户信息的接口服务实例对象
      * @return

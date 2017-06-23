@@ -1,5 +1,6 @@
 package com.jackiez.base.widget.stackview;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
@@ -303,6 +304,8 @@ public class StackView extends ViewGroup {
                 对于 B，有 B ∩ ( V - A )
                 对于 C，有 C ∩ ( V - A ∪ B )
                 对于 D，有 D ∩ ( V - A ∪ B ∪ C )
+
+             P.S. 如何解决画布被切割后后续页面执行动画的问题呢？
              */
             View child;
             int childCount = getChildCount();
@@ -339,26 +342,66 @@ public class StackView extends ViewGroup {
     public void removeTopView() {
         if (mCurrentTopView != null) {
             Log.d("test-test", "removeTopView : " + mTopVisibleViewIndex);
-            mCurrentTopView.setAlpha(0);
-            for (int i = getChildCount() - 2; i >= 0; i --) {
-                View self = getChildAt(i);
-                View old = getChildAt(i + 1);
+            final float x = mCurrentTopView.getX();
+            final float y = mCurrentTopView.getY();
+            mCurrentTopView.animate()
+                    .rotation(-10)
+                    .alpha(0f)
+                    .translationX(-mCurrentTopView.getWidth())
+                    .translationY(mCurrentTopView.getY() - 10)
+                    .setDuration(DEFAULT_ANIM_TIME)
+                    .setListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
 
-                float scaleX = ((float) old.getWidth()) / self.getWidth();
-                float scaleY = ((float) old.getHeight()) / self.getHeight();
-                Log.d("test-test", "x = " + old.getX() + ", y = " + old.getY() + ", sx = " + scaleX + ", sy = " + scaleY);
-                self.animate()
-                        .x(old.getX())
-                        .y(old.getY())
-                        .setDuration(DEFAULT_ANIM_TIME)
-                        .start();
-            }
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            for (int i = getChildCount() - 2; i >= 0; i --) {
+                                View self = getChildAt(i);
+                                View old = getChildAt(i + 1);
 
 
-            addViewForRecycled(mTopVisibleViewIndex, mCurrentTopView);
-            removeView(mCurrentTopView);
-            mCurrentTopView = null;
-            mForceReset = true;
+
+                                float scaleX = ((float) old.getWidth()) / self.getWidth();
+                                float scaleY = ((float) old.getHeight()) / self.getHeight();
+                                Log.d("test-test", "x = " + old.getX() + ", y = " + old.getY() + ", sx = " + scaleX + ", sy = " + scaleY);
+                                if (i == getChildCount() - 2) {
+                                    self.animate()
+                                            .x(x)
+                                            .y(y)
+                                            .setDuration(DEFAULT_ANIM_TIME)
+                                            .start();
+                                } else {
+                                    self.animate()
+                                            .x(old.getX())
+                                            .y(old.getY())
+                                            .setDuration(DEFAULT_ANIM_TIME)
+                                            .start();
+                                }
+                            }
+
+
+                            addViewForRecycled(mTopVisibleViewIndex, mCurrentTopView);
+                            removeViewInLayout(mCurrentTopView);
+                            mCurrentTopView = null;
+                            mForceReset = true;
+                            requestLayout();
+                            invalidate();
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+
         }
     }
 

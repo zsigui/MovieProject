@@ -3,7 +3,6 @@ package com.jackiez.zgithub.test.vm;
 import android.databinding.Bindable;
 import android.view.View;
 
-import com.google.common.eventbus.Subscribe;
 import com.jackiez.base.viewmodel.BaseActivityVM;
 import com.jackiez.zgithub.BR;
 import com.jackiez.zgithub.databinding.TestActivityBinding;
@@ -62,7 +61,6 @@ public class TestActivityVM extends BaseActivityVM<TestActivity> {
 //        DataProvider.testDiffBackProvider(getActivity(), binding.etName.getText().toString(), binding.etPwd.getText().toString());
     }
 
-    @Subscribe
     public void handleGetUserFrom(User user) {
         Mapper.mapperUserToTestVM(user, this);
     }

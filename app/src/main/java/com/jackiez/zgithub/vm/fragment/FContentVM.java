@@ -6,10 +6,10 @@ import com.jackiez.zgithub.view.fragment.ContentFragment;
  * Created by zsigui on 17-3-27.
  */
 
-public class ContentVM extends DefaultBaseVM<ContentFragment> {
+public class FContentVM extends FDefaultBaseVM<ContentFragment> {
 
 
-    public ContentVM(ContentFragment fragment) {
+    public FContentVM(ContentFragment fragment) {
         super(fragment);
     }
 
